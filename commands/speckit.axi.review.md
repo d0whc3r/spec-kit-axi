@@ -4,7 +4,7 @@ description: "Open a feature's spec-kit markdown in a browser review surface, co
 
 # Axi
 
-`/speckit.axi` opens a human-friendly review surface for the active feature's
+`/speckit.axi.review` opens a human-friendly review surface for the active feature's
 markdown artifacts. The reviewer reads the rendered documents, selects text to
 annotate, and chats comments. You (the agent) receive the queued feedback and
 edit the canonical `.md` files, while the browser live-reloads so the reviewer

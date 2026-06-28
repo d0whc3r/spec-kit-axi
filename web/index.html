@@ -182,9 +182,9 @@ specify extension add axi</code></pre>
         <div class="container">
           <h2>One command</h2>
           <p class="section-lede">
-            <code>/speckit.axi</code> opens the review surface for the active feature, collects your
-            annotations and comments, and applies the queued feedback to the markdown. It does not
-            generate new files; it edits the feature's existing documents in place.
+            <code>/speckit.axi.review</code> opens the review surface for the active feature,
+            collects your annotations and comments, and applies the queued feedback to the markdown.
+            It does not generate new files; it edits the feature's existing documents in place.
           </p>
 
           <div class="table-wrap">
@@ -197,13 +197,13 @@ specify extension add axi</code></pre>
               </thead>
               <tbody>
                 <tr>
-                  <td><code>/speckit.axi</code></td>
+                  <td><code>/speckit.axi.review</code></td>
                   <td>
                     Open a feature's markdown in a browser review surface, collect annotations and
                     comments, and apply the queued feedback to the canonical <code>.md</code> files.
                     Optionally name the feature directory, for example
-                    <code>/speckit.axi specs/001-my-feature</code>; otherwise the agent resolves it
-                    from your branch or the most recent <code>specs/*</code> directory.
+                    <code>/speckit.axi.review specs/001-my-feature</code>; otherwise the agent
+                    resolves it from your branch or the most recent <code>specs/*</code> directory.
                   </td>
                 </tr>
               </tbody>
@@ -211,8 +211,8 @@ specify extension add axi</code></pre>
           </div>
 
           <p class="note">
-            Under the hood, <code>/speckit.axi</code> drives a small zero-dependency Node tool,
-            <code>templates/axi-web/axi-server.mjs</code>, that binds only to
+            Under the hood, <code>/speckit.axi.review</code> drives a small zero-dependency Node
+            tool, <code>templates/axi-web/axi-server.mjs</code>, that binds only to
             <code>127.0.0.1</code>. The agent uses these subcommands to bridge your browser and the
             markdown:
           </p>
@@ -328,7 +328,7 @@ ls .specify/extensions/axi          # extension files present</code></pre>
                 Run the command in your Spec Kit-aware assistant. Name the feature directory, or let
                 the agent resolve it from your branch.
               </p>
-              <pre data-copy><code>/speckit.axi specs/001-my-feature</code></pre>
+              <pre data-copy><code>/speckit.axi.review specs/001-my-feature</code></pre>
               <p>
                 The agent starts a local server, opens your browser, and tells you the surface is
                 ready.

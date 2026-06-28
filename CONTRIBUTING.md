@@ -25,9 +25,9 @@ The CLI installs the extension under `.specify/extensions/axi/` of the target pr
 
 ## Iterating on the Commands
 
-The slash command is a markdown prompt at `commands/speckit.axi.md`. Edit it, then dogfood:
+The slash command is a markdown prompt at `commands/speckit.axi.review.md`. Edit it, then dogfood:
 
-1. Run `/speckit.axi quick` against a real repository (this one works).
+1. Run `/speckit.axi.review quick` against a real repository (this one works).
 2. Judge the output against the contract: findings carry `file:line` evidence, the table is leverage-ordered, and every written spec prompt passes the "Quality bar" section of `templates/axi-template.md`.
 3. The strongest signal is processing a generated spec prompt through `/speckit.specify` in a fresh session with zero context. Where the generated spec drops or distorts a requirement, the command prompt or the template needs tightening.
 

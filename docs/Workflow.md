@@ -9,7 +9,7 @@ loop, to ending the session.
 Browser (the reviewer)            Review server            Agent
 ──────────────────────            ─────────────            ─────
 
-read rendered .md  ───────────────────────────────────────  /speckit.axi
+read rendered .md  ───────────────────────────────────────  /speckit.axi.review
 select text, add notes                                       start <feature-dir>
                           ◄─── opens browser ────────────
 click Send  ──────────────►  queue flushed

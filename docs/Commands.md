@@ -4,17 +4,17 @@ One slash command. It opens a feature's markdown for review in the browser,
 collects the reviewer's notes, and applies them to the canonical files. It does
 not generate a new file; it edits the feature's existing markdown in place.
 
-| Command                       | Reads                                | Writes                                           | Audience                |
-| ----------------------------- | ------------------------------------ | ------------------------------------------------ | ----------------------- |
-| [`/speckit.axi`](#speckitaxi) | every `.md` in the feature directory | the same `.md` files, edited in place from notes | Anyone reviewing a spec |
+| Command                                    | Reads                                | Writes                                           | Audience                |
+| ------------------------------------------ | ------------------------------------ | ------------------------------------------------ | ----------------------- |
+| [`/speckit.axi.review`](#speckitaxireview) | every `.md` in the feature directory | the same `.md` files, edited in place from notes | Anyone reviewing a spec |
 
-`/speckit.axi` accepts an optional feature directory as its argument
-(`/speckit.axi specs/001-my-feature`). Without one, the agent resolves the
+`/speckit.axi.review` accepts an optional feature directory as its argument
+(`/speckit.axi.review specs/001-my-feature`). Without one, the agent resolves the
 feature itself (see [Feature resolution](#feature-resolution)).
 
 ---
 
-## `/speckit.axi`
+## `/speckit.axi.review`
 
 Opens a human-friendly review surface for the active feature's markdown. The
 reviewer reads the rendered documents, selects text to annotate, and chats
@@ -53,7 +53,7 @@ Format](Annotation-Format.md) for the shape of the queue.
 
 ## The review server
 
-`/speckit.axi` drives a small Node tool that ships with the extension at
+`/speckit.axi.review` drives a small Node tool that ships with the extension at
 `templates/axi-web/axi-server.mjs`. It uses only the Node standard library
 (zero dependencies) and binds only to `127.0.0.1`. You never call these
 subcommands by hand; the agent does, while you stay in the browser. They are

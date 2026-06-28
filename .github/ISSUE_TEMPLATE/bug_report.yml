@@ -22,7 +22,7 @@ body:
       label: Affected command
       description: Which extension command exposed the bug? Pick "Other" for manifest or template issues.
       options:
-        - /speckit.axi
+        - /speckit.axi.review
         - Manifest or catalog
         - Templates
         - Other
@@ -66,7 +66,7 @@ body:
       description: Exact steps a maintainer can follow. Include the repo shape or prompt snippets that triggered the bug if relevant.
       placeholder: |
         1. Install the extension at version X.
-        2. Run `/speckit.axi quick` on the repository.
+        2. Run `/speckit.axi.review quick` on the repository.
         3. Observe the generated `specs/<spec>/axi/<plan-name>.md`.
     validations:
       required: true

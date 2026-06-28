@@ -1,8 +1,8 @@
 # Axi Template
 
-Reference for `/speckit.axi`: the shape of the feedback the review surface
+Reference for `/speckit.axi.review`: the shape of the feedback the review surface
 returns, and how to apply it to the canonical markdown. The command file is
-`commands/speckit.axi.md`; the review tool is `templates/axi-web/axi-server.mjs`.
+`commands/speckit.axi.review.md`; the review tool is `templates/axi-web/axi-server.mjs`.
 
 ## Annotation format
 

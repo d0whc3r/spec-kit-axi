@@ -6,7 +6,7 @@ How the command and the local review server work when you run them.
 
 The extension has two parts:
 
-1. **A markdown command.** `commands/speckit.axi.md` is a prompt the Spec Kit
+1. **A markdown command.** `commands/speckit.axi.review.md` is a prompt the Spec Kit
    assistant reads. It has no runtime of its own; the assistant follows it.
 2. **A local review tool.** `templates/axi-web/axi-server.mjs` is a small Node
    program that uses only the Node standard library (zero dependencies). The
@@ -19,9 +19,9 @@ subcommands. The server bridges the two.
 ## How a review is invoked
 
 ```
-You run /speckit.axi [feature-dir]
+You run /speckit.axi.review [feature-dir]
         ↓
-The slash command resolves to commands/speckit.axi.md
+The slash command resolves to commands/speckit.axi.review.md
         ↓
 The agent resolves the feature directory (argument, branch, or most recent specs/*)
         ↓

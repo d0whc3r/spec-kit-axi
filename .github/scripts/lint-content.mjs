@@ -24,7 +24,7 @@ const BANNED_PHRASES = ["delve", "tapestry", "in essence", "navigate the landsca
 
 // Shipped command bodies are linted for the same prose rules as templates
 // (AGENTS.md "Agent Boundaries" rule 4: no em dashes, plain English).
-const COMMANDS = ["commands/speckit.axi.md"];
+const COMMANDS = ["commands/speckit.axi.review.md"];
 
 // Each entry pairs a shipped reference template with the command that must
 // point executors at it. `mandatory` lists the template's stable top-level
@@ -32,7 +32,7 @@ const COMMANDS = ["commands/speckit.axi.md"];
 const TEMPLATES = [
   {
     template: "templates/axi-template.md",
-    command: "commands/speckit.axi.md",
+    command: "commands/speckit.axi.review.md",
     mandatory: ["Template"],
     optional: [],
     extraRefs: [],

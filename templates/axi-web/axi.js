@@ -33,9 +33,12 @@ const docEl = document.getElementById("doc");
 const featureEl = document.getElementById("feature");
 const queueEl = document.getElementById("queue");
 const qcountEl = document.getElementById("qcount");
+const emptyEl = document.getElementById("empty");
+const composerEl = document.getElementById("composer");
 const composerInput = document.getElementById("composer-input");
 const sendBtn = document.getElementById("send");
 const statusEl = document.getElementById("status");
+const statusTextEl = statusEl.querySelector(".axi-status-text");
 const messagesEl = document.getElementById("messages");
 
 const state = { agentListening: false, ended: false, processing: false };
@@ -93,15 +96,22 @@ function shorten(s, n = 90) {
 }
 
 function updateSendBtn() {
-  sendBtn.textContent = items.length
-    ? `Send ${items.length} note${items.length === 1 ? "" : "s"}`
-    : "Send";
-  sendBtn.disabled = items.length === 0 || state.ended;
+  const hasInput = composerInput.value.trim().length > 0;
+  sendBtn.disabled = (items.length === 0 && !hasInput) || state.ended;
+  sendBtn.title = items.length
+    ? `Send ${items.length} note${items.length === 1 ? "" : "s"} to the agent`
+    : "Send to the agent";
+}
+
+// Show the how-to until there is something in the conversation.
+function updateEmpty() {
+  if (emptyEl) emptyEl.hidden = items.length > 0 || messagesEl.children.length > 0;
 }
 
 function renderQueue() {
   qcountEl.textContent = String(items.length);
   updateSendBtn();
+  updateEmpty();
   queueEl.innerHTML = "";
   for (const it of items) {
     const li = document.createElement("li");
@@ -245,17 +255,44 @@ function highlight(range) {
 }
 
 // --- chat composer ---------------------------------------------------------
+//
+// Enter stacks the typed comment onto the batch (Shift+Enter is a newline); the
+// send button dispatches the whole batch. Anything still typed when send is
+// pressed is stacked first, so the common "type one note and send" path is a
+// single click, like a chatbot.
+
+function autoGrow() {
+  composerInput.style.height = "auto";
+  composerInput.style.height = `${Math.min(composerInput.scrollHeight, 144)}px`;
+}
+
+function stageComment() {
+  const v = composerInput.value.trim();
+  if (!v) return false;
+  items = queueAdd(items, chatItem(v));
+  composerInput.value = "";
+  autoGrow();
+  saveQueue();
+  renderQueue();
+  return true;
+}
+
+composerInput.addEventListener("input", () => {
+  autoGrow();
+  updateSendBtn();
+});
 
 composerInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
-    const v = composerInput.value.trim();
-    if (!v) return;
-    items = queueAdd(items, chatItem(v));
-    composerInput.value = "";
-    saveQueue();
-    renderQueue();
+    stageComment();
   }
+});
+
+composerEl.addEventListener("submit", (e) => {
+  e.preventDefault();
+  stageComment();
+  send();
 });
 
 // --- mermaid (lazy, CDN) ---------------------------------------------------
@@ -308,33 +345,54 @@ async function loadDoc(name, { preserveScroll = false } = {}) {
 // --- agent loop: send, live updates, status --------------------------------
 
 function renderStatus() {
+  let cls = "axi-status";
+  let text = "agent not connected";
   if (state.ended) {
-    statusEl.textContent = "● session ended";
-    statusEl.className = "axi-status is-ended";
+    cls = "axi-status is-ended";
+    text = "session ended";
   } else if (state.processing) {
-    statusEl.textContent = "● processing…";
-    statusEl.className = "axi-status is-processing";
+    cls = "axi-status is-processing";
+    text = "working…";
   } else if (state.agentListening) {
-    statusEl.textContent = "● agent ready";
-    statusEl.className = "axi-status is-ready";
-  } else {
-    statusEl.textContent = "○ agent not connected";
-    statusEl.className = "axi-status";
+    cls = "axi-status is-ready";
+    text = "agent ready";
   }
+  statusEl.className = cls;
+  statusTextEl.textContent = text;
+}
+
+// A chat-style "agent is working" bubble shown while we wait for a reply.
+let typingEl = null;
+function showTyping() {
+  if (typingEl) return;
+  typingEl = document.createElement("div");
+  typingEl.className = "axi-typing";
+  typingEl.setAttribute("aria-label", "Agent is working");
+  for (let i = 0; i < 3; i++) typingEl.appendChild(document.createElement("span"));
+  messagesEl.appendChild(typingEl);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+function hideTyping() {
+  typingEl?.remove();
+  typingEl = null;
 }
 
 function setProcessing(v) {
   state.processing = v;
+  if (v) showTyping();
+  else hideTyping();
+  updateEmpty();
   renderStatus();
 }
 
-function addMessage(text) {
+function addMessage(text, { system = false } = {}) {
   if (!text) return;
   const el = document.createElement("div");
-  el.className = "axi-message";
+  el.className = system ? "axi-message axi-message--system" : "axi-message";
   el.textContent = text;
   messagesEl.appendChild(el);
   messagesEl.scrollTop = messagesEl.scrollHeight;
+  updateEmpty();
 }
 
 async function send() {
@@ -378,7 +436,7 @@ function connectEvents() {
     state.processing = false;
     renderStatus();
     updateSendBtn();
-    addMessage("The agent ended this review session.");
+    addMessage("The agent ended this review session.", { system: true });
   });
 }
 
@@ -394,10 +452,18 @@ function setupTheme() {
   });
 }
 
+function setupHelp() {
+  const dlg = document.getElementById("help");
+  if (!dlg) return;
+  const open = () => dlg.showModal();
+  document.getElementById("help-btn")?.addEventListener("click", open);
+  document.getElementById("empty-help")?.addEventListener("click", open);
+}
+
 async function init() {
   setupTheme();
+  setupHelp();
   renderStatus();
-  sendBtn.addEventListener("click", send);
   connectEvents();
   await loadQueue();
   let manifest;

@@ -6,7 +6,7 @@ browser, leave two notes, and watch the agent apply them.
 
 ## The document under review: `spec.md` (excerpt)
 
-The reviewer opens `/speckit.axi specs/001-bulk-export` and reads the rendered
+The reviewer opens `/speckit.axi.review specs/001-bulk-export` and reads the rendered
 `spec.md`. One section looks like this:
 
 ```markdown

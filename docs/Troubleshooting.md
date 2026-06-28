@@ -100,7 +100,7 @@ error: no review session is running
 ```
 
 A `poll`, `reply`, or `end` ran with no live server for that feature. Start one
-first with `/speckit.axi <feature-dir>`, or run
+first with `/speckit.axi.review <feature-dir>`, or run
 `node templates/axi-web/axi-server.mjs start <feature-dir>`.
 
 ## "not a directory"

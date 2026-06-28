@@ -15,8 +15,8 @@ requires:
 
 provides:
   commands:
-    - name: speckit.axi
-      file: commands/speckit.axi.md
+    - name: speckit.axi.review
+      file: commands/speckit.axi.review.md
       description: "Open a feature's markdown in a browser review surface, collect annotations, and apply the queued feedback."
 
 tags:

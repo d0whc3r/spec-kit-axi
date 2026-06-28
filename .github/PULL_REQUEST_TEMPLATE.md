@@ -27,7 +27,7 @@
 
 <!-- See the "Agent Boundaries" section of AGENTS.md. -->
 
-- [ ] `commands/speckit.axi.md` is the single source of truth for the command.
+- [ ] `commands/speckit.axi.review.md` is the single source of truth for the command.
 - [ ] `extension.yml` `provides.commands` matches the canonical command set.
 - [ ] `catalog.json` `provides.commands` count matches.
 - [ ] The advisor boundary holds: the command writes only under `specs/<spec-name>/axi/` and never edits source code.

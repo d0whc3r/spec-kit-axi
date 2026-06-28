@@ -8,7 +8,7 @@ while the browser live-reloads to show the changes.
 
 ## How it works
 
-1. Run `/speckit.axi`. The agent launches a local review surface (Node, zero
+1. Run `/speckit.axi.review`. The agent launches a local review surface (Node, zero
    dependencies, loopback only) for the active feature and opens your browser.
 2. You read the artifacts as web pages. Select any phrase to attach a note, or
    type a general comment in the chat. Notes collect in a queue.
@@ -25,29 +25,29 @@ connection; offline, the surface shows a notice.
 
 The full guide lives in the **[project wiki](https://github.com/d0whc3r/spec-kit-axi/wiki)**. This README is the front door only.
 
-| Wiki page                                                                           | When to read                                                          |
-| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [Home](https://github.com/d0whc3r/spec-kit-axi/wiki/Home)                           | Overview and reading order.                                           |
-| [Getting Started](https://github.com/d0whc3r/spec-kit-axi/wiki/Getting-Started)     | First install, zero to your first browser review in five minutes.     |
-| [Commands](https://github.com/d0whc3r/spec-kit-axi/wiki/Commands)                   | Deep reference for `/speckit.axi` and the review server it drives.    |
-| [Workflow](https://github.com/d0whc3r/spec-kit-axi/wiki/Workflow)                   | How a review flows: feature resolution, the annotate and apply loop.  |
-| [Examples](https://github.com/d0whc3r/spec-kit-axi/wiki/Examples)                   | A worked review session and the edits it produces.                    |
-| [Annotation Format](https://github.com/d0whc3r/spec-kit-axi/wiki/Annotation-Format) | The TOON queue the reviewer sends and how each field maps to an edit. |
-| [Troubleshooting](https://github.com/d0whc3r/spec-kit-axi/wiki/Troubleshooting)     | Server, browser, port, and offline issues, with their fixes.          |
-| [FAQ](https://github.com/d0whc3r/spec-kit-axi/wiki/FAQ)                             | Conceptual questions and design rationale.                            |
-| [Architecture](https://github.com/d0whc3r/spec-kit-axi/wiki/Architecture)           | How the command and the local review server work.                     |
+| Wiki page                                                                           | When to read                                                              |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [Home](https://github.com/d0whc3r/spec-kit-axi/wiki/Home)                           | Overview and reading order.                                               |
+| [Getting Started](https://github.com/d0whc3r/spec-kit-axi/wiki/Getting-Started)     | First install, zero to your first browser review in five minutes.         |
+| [Commands](https://github.com/d0whc3r/spec-kit-axi/wiki/Commands)                   | Deep reference for `/speckit.axi.review` and the review server it drives. |
+| [Workflow](https://github.com/d0whc3r/spec-kit-axi/wiki/Workflow)                   | How a review flows: feature resolution, the annotate and apply loop.      |
+| [Examples](https://github.com/d0whc3r/spec-kit-axi/wiki/Examples)                   | A worked review session and the edits it produces.                        |
+| [Annotation Format](https://github.com/d0whc3r/spec-kit-axi/wiki/Annotation-Format) | The TOON queue the reviewer sends and how each field maps to an edit.     |
+| [Troubleshooting](https://github.com/d0whc3r/spec-kit-axi/wiki/Troubleshooting)     | Server, browser, port, and offline issues, with their fixes.              |
+| [FAQ](https://github.com/d0whc3r/spec-kit-axi/wiki/FAQ)                             | Conceptual questions and design rationale.                                |
+| [Architecture](https://github.com/d0whc3r/spec-kit-axi/wiki/Architecture)           | How the command and the local review server work.                         |
 
 The wiki is generated from [`docs/`](docs/) on every push to `main`. To browse
 the same content as plain markdown, open the [docs folder](docs/).
 
 ## At a glance
 
-| Command        | What it does                                                                                     |
-| -------------- | ------------------------------------------------------------------------------------------------ |
-| `/speckit.axi` | Open a feature's markdown in a browser review surface, collect annotations, and apply the notes. |
+| Command               | What it does                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `/speckit.axi.review` | Open a feature's markdown in a browser review surface, collect annotations, and apply the notes. |
 
-`/speckit.axi` takes an optional feature directory, for example
-`/speckit.axi specs/001-my-feature`. Without one, the agent resolves the
+`/speckit.axi.review` takes an optional feature directory, for example
+`/speckit.axi.review specs/001-my-feature`. Without one, the agent resolves the
 feature from your branch or the most recent `specs/*` directory. The command
 does not generate a new file; it edits the feature's existing markdown in place.
 

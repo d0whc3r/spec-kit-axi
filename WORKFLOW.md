@@ -6,10 +6,10 @@ feedback back to the agent.
 
 ## Run a review
 
-Ask the agent to run `/speckit.axi`. Optionally name the feature directory:
+Ask the agent to run `/speckit.axi.review`. Optionally name the feature directory:
 
 ```text
-/speckit.axi specs/001-my-feature
+/speckit.axi.review specs/001-my-feature
 ```
 
 If you do not name one, the agent resolves it (the path you gave, the `specs/`
@@ -45,7 +45,7 @@ browser or ask the agent to stop when you are done.
 
 ## The CLI behind it
 
-`/speckit.axi` drives a small Node tool, `templates/axi-web/axi-server.mjs`:
+`/speckit.axi.review` drives a small Node tool, `templates/axi-web/axi-server.mjs`:
 
 | Command                      | Purpose                                         |
 | ---------------------------- | ----------------------------------------------- |

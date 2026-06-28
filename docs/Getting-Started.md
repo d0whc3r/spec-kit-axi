@@ -76,7 +76,7 @@ Run the command in your assistant. Name the feature directory, or let the agent
 resolve it from your branch:
 
 ```text
-/speckit.axi specs/001-my-feature
+/speckit.axi.review specs/001-my-feature
 ```
 
 The agent starts a local review server bound to `127.0.0.1`, opens your
@@ -108,7 +108,7 @@ nothing else is touched.
 Pass the directory as the command argument:
 
 ```text
-/speckit.axi specs/002-some-other-feature
+/speckit.axi.review specs/002-some-other-feature
 ```
 
 Without an argument the agent picks the directory from your git branch, the one

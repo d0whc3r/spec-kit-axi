@@ -64,7 +64,7 @@ Facts on this page that must match the canonical sources and the wiki:
 
 - The version pin and the `requires.speckit_version` value (header badge, hero
   badge, install snippets).
-- The command name (`/speckit.axi`) and what it does.
+- The command name (`/speckit.axi.review`) and what it does.
 - The install and usage commands, including the pinned release URL.
 - Repository, wiki, issues, and discussions links.
 

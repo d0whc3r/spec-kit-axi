@@ -79,17 +79,17 @@ shell commands, and other important information, read the current plan
 ## Agent Boundaries
 
 This repository ships the **axi** extension for Spec Kit. **TODO: describe the
-extension's purpose.** It exposes a single command, `/speckit.axi`. The content
+extension's purpose.** It exposes a single command, `/speckit.axi.review`. The content
 (command, templates, docs) is placeholder until the scope is defined; the
 build, lint, release, and docs infrastructure is already in place.
 
-| Agent         | Skill Surface                         | Notes                                         |
-| ------------- | ------------------------------------- | --------------------------------------------- |
-| Spec Kit core | `commands/speckit.axi.md` (canonical) | Shipped in the release zip with `templates/`. |
+| Agent         | Skill Surface                                | Notes                                         |
+| ------------- | -------------------------------------------- | --------------------------------------------- |
+| Spec Kit core | `commands/speckit.axi.review.md` (canonical) | Shipped in the release zip with `templates/`. |
 
 Rules:
 
-1. Canonical command file lives at `commands/speckit.axi.md`.
+1. Canonical command file lives at `commands/speckit.axi.review.md`.
 2. Changing the command surface requires updating in lockstep: the canonical file, `extension.yml` `provides.commands`, the `catalog.json` `provides.commands` count, and the `REQUIRED` list in `.github/scripts/validate-manifest.mjs`.
 3. Renaming or removing the command is a breaking change and requires a `feat!:` or `BREAKING CHANGE:` commit.
 4. Shipped content (command, templates) uses plain English and no em dashes; `.github/scripts/lint-content.mjs` enforces this.

@@ -26,7 +26,7 @@ const REQUIRED = [
   "extension.yml",
   "README.md",
   "LICENSE",
-  "commands/speckit.axi.md",
+  "commands/speckit.axi.review.md",
   "templates/axi-template.md",
   "templates/axi-web/index.html",
   "templates/axi-web/axi.css",

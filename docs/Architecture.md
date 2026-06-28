@@ -8,7 +8,7 @@ The extension has two parts:
 
 1. **A markdown command.** `commands/speckit.axi.review.md` is a prompt the Spec Kit
    assistant reads. It has no runtime of its own; the assistant follows it.
-2. **A local review tool.** `templates/axi-web/axi-server.mjs` is a small Node
+2. **A local review tool.** `web-review/axi-server.mjs` is a small Node
    program that uses only the Node standard library (zero dependencies). The
    assistant launches it with `node`. Unlike a pure-text extension, this part
    does have a runtime: a short-lived HTTP server bound to `127.0.0.1`.
@@ -25,7 +25,7 @@ The slash command resolves to commands/speckit.axi.review.md
         ↓
 The agent resolves the feature directory (argument, branch, or most recent specs/*)
         ↓
-The agent runs:  node templates/axi-web/axi-server.mjs start <feature-dir>
+The agent runs:  node web-review/axi-server.mjs start <feature-dir>
         ↓
 The server binds to 127.0.0.1 on an open port and opens your browser
         ↓

@@ -10,7 +10,7 @@ annotate, and chats comments. You (the agent) receive the queued feedback and
 edit the canonical `.md` files, while the browser live-reloads so the reviewer
 sees each change.
 
-The review tool ships with this extension at `templates/axi-web/axi-server.mjs`
+The review tool ships with this extension at `web-review/axi-server.mjs`
 (Node, zero dependencies, loopback only). Follow the playbook in
 `templates/axi-template.md` when applying feedback.
 
@@ -25,7 +25,7 @@ as the feature directory to review, or as a hint for resolving it.
 
 ## Outline
 
-The `axi` CLI is `node templates/axi-web/axi-server.mjs`. Run these steps.
+The `axi` CLI is `node web-review/axi-server.mjs`. Run these steps.
 
 ### 1. Resolve the feature directory
 
@@ -40,7 +40,7 @@ whatever else was generated):
 
 ### 2. Launch the review surface
 
-Run `node templates/axi-web/axi-server.mjs start <feature-dir>`. It opens the
+Run `node web-review/axi-server.mjs start <feature-dir>`. It opens the
 browser and prints the URL and the discovered artifacts. Tell the reviewer the
 surface is ready and that they can annotate and send notes.
 
@@ -48,7 +48,7 @@ surface is ready and that they can annotate and send notes.
 
 Repeat until the session ends:
 
-1. Run `node templates/axi-web/axi-server.mjs poll <feature-dir>`. It blocks
+1. Run `node web-review/axi-server.mjs poll <feature-dir>`. It blocks
    until the reviewer clicks Send, then prints the queued notes as TOON.
 2. If the output says the reviewer ended the session, leave the loop.
 3. Otherwise apply each note to the canonical markdown:
@@ -56,18 +56,18 @@ Repeat until the session ends:
      `occurrence` to disambiguate duplicates), and act on the reviewer's `note`.
    - `chat`: apply the `note` as feedback across the relevant documents.
      Preserve each document's structure and style. Change only what the notes ask.
-4. Run `node templates/axi-web/axi-server.mjs reply <feature-dir> "<summary>"`
+4. Run `node web-review/axi-server.mjs reply <feature-dir> "<summary>"`
    with a one-line summary of what you changed. The browser live-reloads.
 5. Poll again for the next round.
 
 ### 4. Finish
 
 When the review is done, shut the server down with
-`node templates/axi-web/axi-server.mjs stop <feature-dir>`.
+`node web-review/axi-server.mjs stop <feature-dir>`.
 
 If you are ending the review yourself (the reviewer asked you to stop rather than
 ending it in the browser), first run
-`node templates/axi-web/axi-server.mjs end <feature-dir>` so the browser shows the
+`node web-review/axi-server.mjs end <feature-dir>` so the browser shows the
 session as ended, then run `stop`.
 
 ## Output

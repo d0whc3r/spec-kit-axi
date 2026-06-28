@@ -33,6 +33,8 @@
     "web:dev": "pnpm --filter @spec-kit-axi/web dev",
     "web:build": "pnpm examples:sync && pnpm --filter @spec-kit-axi/web build",
     "web:preview": "pnpm --filter @spec-kit-axi/web preview",
+    "review:dev": "pnpm --filter @spec-kit-axi/web-review dev",
+    "review:build": "pnpm --filter @spec-kit-axi/web-review build",
     "check": "pnpm run validate && pnpm run sync:check && pnpm run lint && pnpm run lint:content",
     "release": "semantic-release",
     "release:dry": "semantic-release --dry-run",

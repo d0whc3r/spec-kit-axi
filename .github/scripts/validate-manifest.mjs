@@ -28,11 +28,8 @@ const REQUIRED = [
   "LICENSE",
   "commands/speckit.axi.review.md",
   "templates/axi-template.md",
-  "templates/axi-web/index.html",
-  "templates/axi-web/axi.css",
-  "templates/axi-web/axi-core.mjs",
-  "templates/axi-web/axi.js",
-  "templates/axi-web/axi-server.mjs",
+  "web-review/axi-server.mjs",
+  "web-review/axi-core.mjs",
 ];
 
 // Returns true on success, false on any failure (logging each problem).

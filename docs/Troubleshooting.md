@@ -76,7 +76,7 @@ The agent could not reach the server within five seconds of launching it.
 - A previous session may have left a stale state directory. The server stores
   state under `.speckit-axi/`; a `start` reuses a live server, so this is
   usually harmless. If a server is wedged, run
-  `node templates/axi-web/axi-server.mjs stop` to shut every server down, then
+  `node web-review/axi-server.mjs stop` to shut every server down, then
   start again.
 - If a fixed `--port` is busy, let the server pick an open one (omit `--port`).
 
@@ -101,7 +101,7 @@ error: no review session is running
 
 A `poll`, `reply`, or `end` ran with no live server for that feature. Start one
 first with `/speckit.axi.review <feature-dir>`, or run
-`node templates/axi-web/axi-server.mjs start <feature-dir>`.
+`node web-review/axi-server.mjs start <feature-dir>`.
 
 ## "not a directory"
 
@@ -126,8 +126,8 @@ End it from the browser, or ask the agent to stop. If a server is still
 running after you thought it ended, stop it directly:
 
 ```bash
-node templates/axi-web/axi-server.mjs stop          # stop every running server
-node templates/axi-web/axi-server.mjs stop <dir>    # stop one feature's server
+node web-review/axi-server.mjs stop          # stop every running server
+node web-review/axi-server.mjs stop <dir>    # stop one feature's server
 ```
 
 ## Filing a bug

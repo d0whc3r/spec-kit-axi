@@ -45,7 +45,7 @@ browser or ask the agent to stop when you are done.
 
 ## The CLI behind it
 
-`/speckit.axi.review` drives a small Node tool, `templates/axi-web/axi-server.mjs`:
+`/speckit.axi.review` drives a small Node tool, `web-review/axi-server.mjs`:
 
 | Command                      | Purpose                                         |
 | ---------------------------- | ----------------------------------------------- |

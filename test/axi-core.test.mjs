@@ -12,7 +12,7 @@ import {
   queueDeserialize,
   toonField,
   toonQueue,
-} from "../templates/axi-web/axi-core.mjs";
+} from "../web-review/axi-core.mjs";
 
 const MD = `# Title
 

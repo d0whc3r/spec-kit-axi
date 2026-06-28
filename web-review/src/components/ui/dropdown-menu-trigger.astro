@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/lib/utils";
+
+// Bare trigger: pass button classes (e.g. from buttonVariants) via `class`, or
+// nest your own styled markup in the slot.
+type Props = HTMLAttributes<"button">;
+const { class: className, ...rest } = Astro.props;
+---
+
+<button
+  type="button"
+  data-dropdown-trigger
+  aria-haspopup="menu"
+  aria-expanded="false"
+  class={cn(className)}
+  {...rest}
+>
+  <slot />
+</button>

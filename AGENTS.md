@@ -96,9 +96,11 @@ Rules:
 
 ## Web Review App (`web-review/`)
 
-The `web-review/` directory is the Astro + Tailwind front end (the port of the
-vanilla axi review surface in `templates/axi-web/`). Run its commands from
-inside `web-review/`.
+The `web-review/` directory is the Astro + Tailwind front end and the source of
+the whole review surface: the UI, the `axi-server.mjs` review server, and the
+shared `axi-core.mjs` helpers all live here. `astro build` emits the static UI
+to `web-review/dist/` (gitignored, populated only by the build), where the
+server serves it. Run its commands from inside `web-review/`.
 
 ### Development
 

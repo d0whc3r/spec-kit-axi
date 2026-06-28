@@ -35,3 +35,6 @@ jobs:
 
       - name: Build website
         run: pnpm web:build
+
+      - name: Build review UI
+        run: pnpm review:build

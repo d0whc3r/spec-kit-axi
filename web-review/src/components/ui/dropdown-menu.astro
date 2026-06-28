@@ -1,0 +1,58 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/lib/utils";
+
+// Vanilla port of shadcn/ui DropdownMenu (no Radix). Click toggles, outside
+// click / Escape / item click closes. One delegated handler drives every
+// instance.
+// ponytail: no arrow-key navigation and no collision detection. Content is
+// right-aligned under the trigger; add Floating-UI-style positioning only if a
+// menu actually clips at a viewport edge.
+type Props = HTMLAttributes<"div">;
+const { class: className, ...rest } = Astro.props;
+---
+
+<div class={cn("relative inline-block text-left", className)} data-dropdown {...rest}>
+  <slot />
+</div>
+
+<script>
+  type El = HTMLElement;
+
+  function setOpen(root: El, open: boolean) {
+    const content = root.querySelector<El>("[data-dropdown-content]");
+    const trigger = root.querySelector<El>("[data-dropdown-trigger]");
+    if (!content) return;
+    content.hidden = !open;
+    content.dataset.state = open ? "open" : "closed";
+    trigger?.setAttribute("aria-expanded", String(open));
+  }
+
+  function closeAll(except?: El) {
+    document.querySelectorAll<El>("[data-dropdown]").forEach((d) => {
+      if (d !== except) setOpen(d, false);
+    });
+  }
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as El;
+    const trigger = target.closest<El>("[data-dropdown-trigger]");
+    if (trigger) {
+      const root = trigger.closest<El>("[data-dropdown]")!;
+      const content = root.querySelector<El>("[data-dropdown-content]");
+      const willOpen = !!content?.hidden;
+      closeAll(root);
+      setOpen(root, willOpen);
+      return;
+    }
+    if (target.closest("[data-dropdown-item]")) {
+      closeAll(); // selection made — let the item's own handler run, then close
+      return;
+    }
+    if (!target.closest("[data-dropdown-content]")) closeAll();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAll();
+  });
+</script>

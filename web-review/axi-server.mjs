@@ -19,7 +19,10 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { toonQueue } from "./axi-core.mjs";
 
-const WEB_DIR = import.meta.dirname;
+// The static surface is the Astro build output, written to ./dist by
+// `astro build` (gitignored; populated only by the build). In dev the Astro
+// dev server serves the UI and proxies /api + /md here, so this dir is unused.
+const WEB_DIR = path.resolve(import.meta.dirname, "dist");
 const SELF = fileURLToPath(import.meta.url);
 const HOST = "127.0.0.1";
 const PRIORITY = [
@@ -37,6 +40,11 @@ const MIME = {
   ".js": "text/javascript; charset=utf-8",
   ".mjs": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".png": "image/png",
+  ".woff2": "font/woff2",
+  ".map": "application/json; charset=utf-8",
 };
 
 // --- shared helpers --------------------------------------------------------
@@ -181,7 +189,6 @@ function runServer(featureDir, port) {
     const { pathname } = new URL(req.url, `http://${HOST}`);
 
     if (pathname === "/") return serveStatic("index.html", res);
-    if (pathname.startsWith("/assets/")) return serveStatic(pathname.slice("/assets/".length), res);
 
     if (pathname === "/api/manifest") {
       const files = await discoverMarkdown(featureDir);
@@ -311,6 +318,10 @@ function runServer(featureDir, port) {
       server.close();
       return process.exit(0);
     }
+
+    // Anything else is a static asset from the Astro build (index, /_astro/*,
+    // favicon). serveStatic confines reads to WEB_DIR.
+    if (req.method === "GET") return serveStatic(pathname, res);
 
     res.writeHead(404);
     res.end("not found");

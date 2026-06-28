@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/lib/utils";
+
+// Vanilla port of shadcn/ui Separator (no Radix). A thin rule that follows the
+// theme border color, horizontal by default.
+type Props = HTMLAttributes<"div"> & { orientation?: "horizontal" | "vertical" };
+const { orientation = "horizontal", class: className, ...rest } = Astro.props;
+---
+
+<div
+  role="separator"
+  aria-orientation={orientation}
+  class={cn(
+    "shrink-0 bg-border",
+    orientation === "horizontal" ? "h-px w-full" : "h-full w-px",
+    className,
+  )}
+  {...rest}
+>
+</div>

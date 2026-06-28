@@ -1,0 +1,45 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/lib/utils";
+
+// Vanilla port of shadcn/ui Tabs (no Radix). `defaultValue` picks the initially
+// active tab; if omitted the first trigger wins. The script below uses event
+// delegation, so a single copy drives every <Tabs> instance on the page.
+type Props = HTMLAttributes<"div"> & { defaultValue?: string };
+const { defaultValue, class: className, ...rest } = Astro.props;
+---
+
+<div class={cn(className)} data-tabs data-default-value={defaultValue} {...rest}>
+  <slot />
+</div>
+
+<script>
+  type El = HTMLElement;
+
+  function activate(root: El, value: string) {
+    // ponytail: flat scope, nested <Tabs> not supported. Wrap a child set in
+    // its own root and scope these queries if that ever comes up.
+    root.querySelectorAll<El>("[data-tab-trigger]").forEach((t) => {
+      const on = t.dataset.value === value;
+      t.dataset.state = on ? "active" : "inactive";
+      t.setAttribute("aria-selected", String(on));
+    });
+    root.querySelectorAll<El>("[data-tab-content]").forEach((c) => {
+      const on = c.dataset.value === value;
+      c.dataset.state = on ? "active" : "inactive";
+      c.hidden = !on;
+    });
+  }
+
+  document.querySelectorAll<El>("[data-tabs]").forEach((root) => {
+    const first = root.querySelector<El>("[data-tab-trigger]");
+    const initial = root.dataset.defaultValue || first?.dataset.value;
+    if (initial) activate(root, initial);
+    root.addEventListener("click", (e) => {
+      const trigger = (e.target as El).closest<El>("[data-tab-trigger]");
+      if (trigger && root.contains(trigger) && trigger.dataset.value) {
+        activate(root, trigger.dataset.value);
+      }
+    });
+  });
+</script>

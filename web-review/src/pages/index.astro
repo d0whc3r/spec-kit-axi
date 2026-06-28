@@ -1,11 +1,247 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "@/layouts/Layout.astro";
+import Button, { buttonVariants } from "@/components/ui/button.astro";
+import Card from "@/components/ui/card.astro";
+import Badge from "@/components/ui/badge.astro";
+import Skeleton from "@/components/ui/skeleton.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// The shell is composed of shadcn components. Everything created at runtime by
+// the client script (nav items, note cards, agent bubbles, the annotate
+// popover) is stamped from the <template> prototypes at the bottom of this file
+// so those widgets are real shadcn markup too, never hand-rolled in JS.
 ---
 
 <Layout>
-	<Welcome />
+  <div class="flex flex-col bg-background text-foreground lg:h-screen lg:overflow-hidden">
+    <!-- Topbar -->
+    <header
+      class="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between gap-4 border-b border-border bg-background/95 px-4 backdrop-blur lg:static"
+    >
+      <div class="flex items-center gap-2.5">
+        <span class="rounded bg-primary px-1.5 py-0.5 text-sm font-bold tracking-tight text-primary-foreground">
+          axi
+        </span>
+        <span id="feature" class="truncate text-sm text-muted-foreground"></span>
+      </div>
+      <div class="flex items-center gap-1">
+        <Button id="theme" variant="ghost" size="icon" type="button" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </Button>
+        <Button id="help-btn" variant="ghost" size="icon" type="button" aria-label="How to use axi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <path d="M12 17h.01"></path>
+          </svg>
+        </Button>
+      </div>
+    </header>
+
+    <!-- Body: three zones on desktop, stacked on small screens -->
+    <div class="flex flex-1 flex-col lg:grid lg:min-h-0 lg:grid-cols-[15rem_minmax(0,1fr)_23rem]">
+      <!-- Sidebar: artifact navigation -->
+      <aside
+        class="shrink-0 border-b border-border p-3 lg:overflow-y-auto lg:border-b-0 lg:border-r"
+        aria-label="Artifacts"
+      >
+        <p class="px-2 pb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Artifacts
+        </p>
+        <nav id="nav" class="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-x-visible lg:pb-0">
+        </nav>
+      </aside>
+
+      <!-- Document -->
+      <main class="min-w-0 lg:overflow-y-auto">
+        <article id="doc" class="md-body mx-auto w-full max-w-3xl px-6 py-8"></article>
+      </main>
+
+      <!-- Review panel: notes + agent chat -->
+      <aside
+        class="flex min-h-0 flex-col border-t border-border bg-card lg:border-l lg:border-t-0"
+        aria-label="Review notes"
+      >
+        <div class="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold">Notes</span>
+            <Badge id="qcount" variant="secondary" class="min-w-6 justify-center tabular-nums">0</Badge>
+          </div>
+          <span
+            id="status"
+            class="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors"
+          >
+            <span data-dot class="size-1.5 rounded-full bg-current"></span>
+            <span data-text>agent not connected</span>
+          </span>
+        </div>
+
+        <div id="thread" class="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3 max-lg:max-h-[60vh]">
+          <div id="intro" class="rounded-lg border border-dashed border-border p-4 text-sm">
+            <p class="mb-2 font-semibold">Review this feature</p>
+            <ol class="m-0 list-decimal space-y-1.5 pl-4 text-muted-foreground">
+              <li>Select any text in the document to attach a note to it.</li>
+              <li>Or type a comment below to talk about the whole feature.</li>
+              <li>Notes stack up here. Send them to the agent when you are ready.</li>
+            </ol>
+            <button id="empty-help" type="button" class={buttonVariants({ variant: "link", size: "sm" }) + " mt-1 h-auto p-0"}>
+              How does this work?
+            </button>
+          </div>
+          <ul id="queue" class="m-0 flex list-none flex-col gap-2 p-0"></ul>
+          <div id="messages" class="flex flex-col gap-2" aria-label="Agent replies"></div>
+        </div>
+
+        <div class="shrink-0 border-t border-border p-3">
+          <form id="composer" autocomplete="off">
+            <div class="flex items-end gap-2 rounded-lg border border-input bg-background py-1.5 pl-3 pr-1.5 shadow-sm transition focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
+              <textarea
+                id="composer-input"
+                class="max-h-36 min-w-0 flex-1 resize-none bg-transparent py-1 text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none"
+                rows="1"
+                placeholder="Comment on the feature. Enter to stack a note, Shift+Enter for a newline."
+              ></textarea>
+              <Button id="send" type="submit" size="icon" class="size-8 shrink-0 rounded-full" aria-label="Send notes to the agent" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m22 2-7 20-4-9-9-4Z"></path>
+                  <path d="M22 2 11 13"></path>
+                </svg>
+              </Button>
+            </div>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Help dialog -->
+  <dialog
+    id="help"
+    class="w-[min(34rem,calc(100vw-2rem))] rounded-lg border border-border bg-background p-0 text-foreground shadow-lg backdrop:bg-black/50"
+  >
+    <form method="dialog">
+      <div class="flex items-center justify-between border-b border-border px-5 py-4">
+        <h2 class="text-base font-semibold">How axi works</h2>
+        <button value="close" aria-label="Close" class={buttonVariants({ variant: "ghost", size: "icon" }) + " size-8"}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <ol class="m-0 list-decimal space-y-2.5 px-7 py-5 leading-relaxed">
+        <li><strong>Read</strong> the spec, plan, and tasks using the artifact list on the left.</li>
+        <li><strong>Annotate</strong> by selecting any text in the document, then writing a note about that exact passage.</li>
+        <li><strong>Comment</strong> on the whole feature by typing in the box and pressing Enter. Notes stack up in the panel.</li>
+        <li><strong>Send</strong> the whole batch to the agent with the send button. Anything still typed goes along with it.</li>
+        <li>The agent edits the files and replies here. The document reloads on its own to show the changes.</li>
+      </ol>
+    </form>
+  </dialog>
+
+  <!-- Runtime widget prototypes: cloned and populated by the client script so
+       every dynamic widget is real shadcn markup. -->
+  <template id="tpl-doc-skeleton">
+    <div class="mx-auto w-full max-w-3xl space-y-4">
+      <Skeleton class="h-8 w-2/3" />
+      <Skeleton class="h-4 w-full" />
+      <Skeleton class="h-4 w-5/6" />
+      <Skeleton class="h-4 w-3/4" />
+      <Skeleton class="mt-6 h-28 w-full" />
+      <Skeleton class="h-4 w-full" />
+      <Skeleton class="h-4 w-4/6" />
+    </div>
+  </template>
+
+  <template id="tpl-nav-item">
+    <button
+      type="button"
+      data-nav-item
+      class={buttonVariants({ variant: "ghost", size: "sm" }) +
+        " w-full shrink-0 justify-start font-normal text-muted-foreground aria-[current=page]:bg-accent aria-[current=page]:font-medium aria-[current=page]:text-accent-foreground max-lg:w-auto"}
+    >
+      <span data-label></span>
+    </button>
+  </template>
+
+  <template id="tpl-note-card">
+    <li>
+      <Card data-note-card class="relative p-3 shadow-sm">
+        <button
+          type="button"
+          data-remove
+          aria-label="Remove note"
+          class={buttonVariants({ variant: "ghost" }) + " absolute right-2 top-2 size-6 p-0 text-muted-foreground"}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+        <div class="flex items-center gap-2 pr-6">
+          <Badge data-kind variant="secondary" class="shrink-0">note</Badge>
+          <span data-meta class="truncate text-xs text-muted-foreground"></span>
+        </div>
+        <blockquote data-quote class="mt-2 border-l-2 border-primary/50 pl-2 text-xs italic text-muted-foreground"></blockquote>
+        <textarea
+          data-note
+          rows="2"
+          placeholder="note…"
+          class="mt-2 w-full resize-y rounded-md border border-input bg-background px-2.5 py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        ></textarea>
+      </Card>
+    </li>
+  </template>
+
+  <template id="tpl-message">
+    <div class="max-w-[90%] self-start rounded-lg rounded-tl-sm bg-muted px-3 py-2 text-sm leading-relaxed">
+      <span class="mb-1 block text-[0.62rem] font-bold uppercase tracking-wide text-primary">agent</span>
+      <span data-text class="whitespace-pre-wrap"></span>
+    </div>
+  </template>
+
+  <template id="tpl-typing">
+    <div class="flex w-fit items-center gap-1 self-start rounded-lg rounded-tl-sm bg-muted px-3 py-3" aria-label="Agent is working">
+      <span class="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:0ms]"></span>
+      <span class="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:150ms]"></span>
+      <span class="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:300ms]"></span>
+    </div>
+  </template>
+
+  <template id="tpl-annotate-btn">
+    <button
+      type="button"
+      data-annotate
+      class={buttonVariants({ size: "sm" }) + " fixed z-50 gap-1 shadow-md"}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14"></path>
+        <path d="M12 5v14"></path>
+      </svg>
+      Note
+    </button>
+  </template>
+
+  <template id="tpl-note-popover">
+    <div data-popover class="fixed z-50 w-72">
+      <Card class="p-3 shadow-lg">
+        <blockquote data-quote class="mb-2 border-l-2 border-primary/50 pl-2 text-xs italic text-muted-foreground"></blockquote>
+        <textarea
+          data-note
+          rows="3"
+          placeholder="Your note…"
+          class="w-full resize-y rounded-md border border-input bg-background px-2.5 py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        ></textarea>
+        <div class="mt-2 flex justify-end gap-2">
+          <button type="button" data-cancel class={buttonVariants({ variant: "ghost", size: "sm" })}>Cancel</button>
+          <button type="button" data-add class={buttonVariants({ size: "sm" })}>Add note</button>
+        </div>
+      </Card>
+    </div>
+  </template>
+
+  <script>
+    import "../scripts/axi.js";
+  </script>
 </Layout>

@@ -1,0 +1,25 @@
+schema_version: "1.0"
+
+extension:
+  id: axi
+  name: "Axi Extension"
+  version: "0.0.0"
+  description: "TODO: describe the axi Spec Kit extension."
+  author: d0whc3r
+  repository: https://github.com/d0whc3r/spec-kit-axi
+  homepage: https://d0whc3r.github.io/spec-kit-axi/
+  license: MIT
+
+requires:
+  speckit_version: ">=0.2.0"
+
+provides:
+  commands:
+    - name: speckit.axi
+      file: commands/speckit.axi.md
+      description: "TODO: describe what /speckit.axi does."
+
+tags:
+  - axi
+  - spec-kit
+  - spec-kit-extension

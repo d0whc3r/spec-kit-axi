@@ -1,6 +1,14 @@
 **Axi Extension**
 
 - [Home](Home.md)
+- [Getting Started](Getting-Started.md)
+- [Commands](Commands.md)
+- [Workflow](Workflow.md)
+- [Examples](Examples.md)
+- [Annotation Format](Annotation-Format.md)
+- [Troubleshooting](Troubleshooting.md)
+- [FAQ](FAQ.md)
+- [Architecture](Architecture.md)
 
 ---
 

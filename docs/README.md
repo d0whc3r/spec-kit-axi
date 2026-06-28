@@ -10,6 +10,23 @@ browsed two ways:
    `_Sidebar.md` and `_Footer.md`. This `README.md` is excluded from the wiki
    sync; it exists only to explain the folder.
 
+## Reading order
+
+Start at [Home.md](Home.md). The intended path for new users is:
+
+1. [Home](Home.md)
+2. [Getting Started](Getting-Started.md)
+3. [Workflow](Workflow.md)
+4. [Commands](Commands.md)
+5. [Examples](Examples.md)
+
+Reference material:
+
+- [Annotation Format](Annotation-Format.md)
+- [Troubleshooting](Troubleshooting.md)
+- [FAQ](FAQ.md)
+- [Architecture](Architecture.md)
+
 ## Editing rules
 
 - File names are CamelCase or `Hyphen-Case` (GitHub Wiki page name rules).

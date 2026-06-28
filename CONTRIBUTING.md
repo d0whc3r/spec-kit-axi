@@ -1,6 +1,6 @@
-# Contributing to the Improve Extension
+# Contributing to the Axi Extension
 
-Thanks for considering a contribution. This repository hosts a single Spec Kit extension (`improve`) that ships as a release zip and a catalog entry.
+Thanks for considering a contribution. This repository hosts a single Spec Kit extension (`axi`) that ships as a release zip and a catalog entry.
 
 ## Repo Layout
 
@@ -78,7 +78,7 @@ The release pipeline keeps the community catalog at `github/spec-kit` in sync by
 
 **What runs on each release:**
 
-`.github/scripts/submit-catalog-update.mjs` queries the upstream `catalog.community.json`. If `improve` is present the document targets `[Extension]: Update Improve Extension to vX.Y.Z`; if absent it targets `[Extension]: Add Improve Extension`. The rendered markdown is uploaded as the `upstream-catalog-issue` workflow artifact, retained for 7 days. No token is required.
+`.github/scripts/submit-catalog-update.mjs` queries the upstream `catalog.community.json`. If `axi` is present the document targets `[Extension]: Update Axi Extension to vX.Y.Z`; if absent it targets `[Extension]: Add Axi Extension`. The rendered markdown is uploaded as the `upstream-catalog-issue` workflow artifact, retained for 7 days. No token is required.
 
 **Filing the issue:**
 

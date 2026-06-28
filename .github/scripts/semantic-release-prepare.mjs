@@ -19,9 +19,9 @@ import { logger } from "./lib/log.mjs";
 
 const log = logger("semantic-release-prepare");
 
-// Pinned release archive URL: …/releases/download/vX.Y.Z/improve-X.Y.Z.zip
+// Pinned release archive URL: …/releases/download/vX.Y.Z/axi-X.Y.Z.zip
 const PINNED_URL =
-  /https:\/\/github\.com\/[^/]+\/[^/]+\/releases\/download\/v\d+\.\d+\.\d+\/improve-\d+\.\d+\.\d+\.zip/g;
+  /https:\/\/github\.com\/[^/]+\/[^/]+\/releases\/download\/v\d+\.\d+\.\d+\/axi-\d+\.\d+\.\d+\.zip/g;
 const PINNED_URL_FILES = [
   "README.md",
   "WORKFLOW.md",

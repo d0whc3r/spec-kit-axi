@@ -1,10 +1,10 @@
 {
   "name": "Axi Extension",
   "id": "axi",
-  "description": "TODO: describe the axi Spec Kit extension.",
+  "description": "A Spec Kit extension that renders a feature's markdown in a local browser review surface for human annotation, then returns the queued notes to the agent to apply.",
   "author": "d0whc3r",
-  "version": "0.0.0",
-  "download_url": "https://github.com/d0whc3r/spec-kit-axi/releases/download/v0.0.0/axi-0.0.0.zip",
+  "version": "0.0.1",
+  "download_url": "https://github.com/d0whc3r/spec-kit-axi/releases/download/v0.0.1/axi-0.0.1.zip",
   "repository": "https://github.com/d0whc3r/spec-kit-axi",
   "homepage": "https://d0whc3r.github.io/spec-kit-axi/",
   "documentation": "https://github.com/d0whc3r/spec-kit-axi/wiki",

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>axi review</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/assets/axi.css" />
+  </head>
+  <body>
+    <header class="axi-header">
+      <div class="axi-brand">
+        <strong>axi</strong>
+        <span id="feature" class="axi-feature"></span>
+      </div>
+      <button id="theme" class="axi-theme" type="button" aria-label="Toggle theme">◐</button>
+    </header>
+    <nav id="tabs" class="axi-tabs" role="tablist" aria-label="Artifacts"></nav>
+    <div class="axi-layout">
+      <main id="doc" class="axi-doc md-body">
+        <p class="axi-loading">Loading&hellip;</p>
+      </main>
+      <aside class="axi-panel" aria-label="Notes">
+        <div class="axi-panel-head">
+          <span>Notes <span id="qcount" class="axi-qcount">0</span></span>
+          <span id="status" class="axi-status">○ agent not connected</span>
+        </div>
+        <ul id="queue" class="axi-queue"></ul>
+        <div id="messages" class="axi-messages" aria-label="Agent replies"></div>
+        <div class="axi-panel-foot">
+          <button id="send" class="axi-send" type="button" disabled>Send</button>
+          <form id="composer" class="axi-composer" autocomplete="off">
+            <textarea
+              id="composer-input"
+              rows="2"
+              placeholder="Comment on the whole feature. Enter adds, Shift+Enter for a newline."
+            ></textarea>
+          </form>
+        </div>
+      </aside>
+    </div>
+    <script type="module" src="/assets/axi.js"></script>
+  </body>
+</html>

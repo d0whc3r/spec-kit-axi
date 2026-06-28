@@ -1,8 +1,8 @@
 {
   "name": "spec-kit-axi",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
-  "description": "TODO: describe the axi Spec Kit extension.",
+  "description": "A Spec Kit extension that renders a feature's markdown in a local browser review surface for human annotation, then returns the queued notes to the agent to apply.",
   "keywords": [
     "axi",
     "spec-kit",
@@ -22,6 +22,7 @@
     "oxfmt": "oxfmt --no-error-on-unmatched-pattern",
     "lint": "pnpm run oxfmt --check",
     "lint:content": "node .github/scripts/lint-content.mjs",
+    "test": "node --test 'test/**/*.test.mjs'",
     "format": "pnpm run oxfmt --write",
     "validate": "node .github/scripts/validate-manifest.mjs",
     "sync": "node .github/scripts/sync-metadata.mjs",

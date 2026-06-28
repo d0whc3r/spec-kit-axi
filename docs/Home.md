@@ -1,15 +1,18 @@
 # Axi Extension Wiki
 
-A Spec Kit extension. **TODO: describe what axi does.**
+Axi turns a feature's spec-kit markdown into a human-friendly review surface in
+the browser. The reviewer reads the rendered documents, selects text to
+annotate, and sends notes. The agent applies them to the canonical `.md` files
+while the page live-reloads to show each change.
 
-This wiki is a scaffold. Pages will be added as the extension's purpose is
-defined. The build, lint, release, and docs infrastructure is already in place.
+See the full usage guide in
+[WORKFLOW](https://github.com/d0whc3r/spec-kit-axi/blob/main/WORKFLOW.md).
 
 ## The command at a glance
 
-| Command        | What it does              |
-| -------------- | ------------------------- |
-| `/speckit.axi` | TODO: define the command. |
+| Command        | What it does                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `/speckit.axi` | Open a feature's markdown in a browser review surface, collect annotations, and apply the notes. |
 
 ## External links
 

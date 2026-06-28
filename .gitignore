@@ -8,8 +8,12 @@ web/public/examples/
 upstream-catalog-issue-*.md
 /.specify/
 /specs/
-.agents/skills/speckit-axi*
-.claude/skills/speckit-axi*
+# axi review surface runtime state (sessions, queued annotations)
+.speckit-axi/
+.agents/skills/speckit-*
+.claude/skills/speckit-*
+.github/agents/speckit.*.agent.md
+.github/prompts/speckit.*.prompt.md
 
 # Editor and OS metadata
 .DS_Store

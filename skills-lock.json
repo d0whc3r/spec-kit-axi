@@ -7,6 +7,12 @@
       "skillPath": ".github/skills/add-community-extension/SKILL.md",
       "computedHash": "4ba13e73cde458791574ed096d2812cf2a3ba7ac37a2fe3c0f2df1991036950f"
     },
+    "axi": {
+      "source": "kunchenguid/axi",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/axi/SKILL.md",
+      "computedHash": "e3993d4b3be5c816b83a0957951906d3223dd4e6df2f19869eef6607170b6838"
+    },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",

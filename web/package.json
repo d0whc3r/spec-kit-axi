@@ -9,11 +9,6 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "dompurify": "3.4.11",
-    "marked": "18.0.5",
-    "mermaid": "11.16.0"
-  },
   "devDependencies": {
     "typescript": "6.0.3",
     "vite": "8.1.0"

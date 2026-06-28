@@ -3,8 +3,8 @@ schema_version: "1.0"
 extension:
   id: axi
   name: "Axi Extension"
-  version: "0.0.0"
-  description: "TODO: describe the axi Spec Kit extension."
+  version: "0.0.1"
+  description: "A Spec Kit extension that renders a feature's markdown in a local browser review surface for human annotation, then returns the queued notes to the agent to apply."
   author: d0whc3r
   repository: https://github.com/d0whc3r/spec-kit-axi
   homepage: https://d0whc3r.github.io/spec-kit-axi/
@@ -17,7 +17,7 @@ provides:
   commands:
     - name: speckit.axi
       file: commands/speckit.axi.md
-      description: "TODO: describe what /speckit.axi does."
+      description: "Open a feature's markdown in a browser review surface, collect annotations, and apply the queued feedback."
 
 tags:
   - axi

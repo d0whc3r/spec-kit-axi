@@ -24,7 +24,7 @@ and it is the only way to pin a specific version:
 
 ```bash
 specify extension add axi --from \
-  https://github.com/d0whc3r/spec-kit-axi/releases/download/v0.0.1/axi-0.0.1.zip
+  https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.0.0/axi-1.0.0.zip
 ```
 
 To update later, rerun the same command with a newer version URL.

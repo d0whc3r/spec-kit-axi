@@ -11,7 +11,7 @@ The quickest fix is a direct install:
 
 ```bash
 specify extension add axi --from \
-  https://github.com/d0whc3r/spec-kit-axi/releases/download/v0.0.1/axi-0.0.1.zip
+  https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.0.0/axi-1.0.0.zip
 ```
 
 To install and update by name instead, approve the community catalog once. See

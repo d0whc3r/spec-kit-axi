@@ -94,6 +94,35 @@ Rules:
 3. Renaming or removing the command is a breaking change and requires a `feat!:` or `BREAKING CHANGE:` commit.
 4. Shipped content (command, templates) uses plain English and no em dashes; `.github/scripts/lint-content.mjs` enforces this.
 
+## Web Review App (`web-review/`)
+
+The `web-review/` directory is the Astro + Tailwind front end (the port of the
+vanilla axi review surface in `templates/axi-web/`). Run its commands from
+inside `web-review/`.
+
+### Development
+
+When starting the dev server, use background mode:
+
+```sh
+astro dev --background
+```
+
+Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+
+### Documentation
+
+Full documentation: https://docs.astro.build
+
+Consult these guides before working on related tasks:
+
+- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
+- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
+- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
+- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
+- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
+- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+
 <!-- CODEGRAPH_START -->
 
 ## CodeGraph

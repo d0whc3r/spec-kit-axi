@@ -1,5 +1,22 @@
 # Changelog
 
+# [1.1.0](https://github.com/d0whc3r/spec-kit-axi/compare/v1.0.0...v1.1.0) (2026-06-29)
+
+
+### Bug Fixes
+
+* astro init ([6283703](https://github.com/d0whc3r/spec-kit-axi/commit/62837039e96bd70bb3d47a3828dc8a4833fc3aa3))
+* astro skills ([e67354c](https://github.com/d0whc3r/spec-kit-axi/commit/e67354c40476770b840655ee07e7f489a31545d7))
+* integrate web-review ([54dd414](https://github.com/d0whc3r/spec-kit-axi/commit/54dd414c8c506e8ebae9bd25ab9d2fd949c461de))
+* pipeline for web-rerview ([7ca8515](https://github.com/d0whc3r/spec-kit-axi/commit/7ca8515d638694fcb9a26d2ba8e048b88b07150f))
+* refactor web-review ([f8fddc5](https://github.com/d0whc3r/spec-kit-axi/commit/f8fddc55f2718ba80304eedc5be09d41321e05f7))
+* web review ([d11ebaf](https://github.com/d0whc3r/spec-kit-axi/commit/d11ebaf3b45342c8d9b43d59c1ed154cd35d5659))
+
+
+### Features
+
+* update command ([82469ad](https://github.com/d0whc3r/spec-kit-axi/commit/82469adb5afb695ce4e6d568d1f919b42d3daa3c))
+
 # 1.0.0 (2026-06-28)
 
 

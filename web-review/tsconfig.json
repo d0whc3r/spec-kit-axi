@@ -3,9 +3,14 @@
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"],
   "compilerOptions": {
-    "baseUrl": ".",
+    // esbuild (server) and Vite (browser) do the emit; tsc is type-check only,
+    // and the sources use explicit .ts import specifiers (required by Node's
+    // native TypeScript loader, which strips types off the shipped server).
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"],
+      "@axi-core": ["./src/core/index.ts"]
     }
   }
 }

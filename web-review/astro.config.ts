@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig } from "astro/config";
 import { fileURLToPath } from "node:url";
 
@@ -13,10 +12,10 @@ import tailwindcss from "@tailwindcss/vite";
 //
 const AXI_SERVER = "http://127.0.0.1:4317";
 
-// Pure helpers shared with the server live next to it in this package; reuse
-// them through the "@axi-core" alias rather than duplicating, so the existing
-// node test keeps covering them.
-const axiCore = fileURLToPath(new URL("./axi-core.mjs", import.meta.url));
+// Pure helpers shared with the server. The browser imports the TypeScript
+// source directly through the "@axi-core" alias (Vite bundles it); esbuild
+// compiles the same source to the shipped axi-core.mjs for the server + test.
+const axiCore = fileURLToPath(new URL("./src/core/index.ts", import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({

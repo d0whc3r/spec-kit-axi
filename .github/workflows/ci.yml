@@ -30,11 +30,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build review UI
+        run: pnpm review:build
+
       - name: Check (validate, sync, lint, lint:content)
         run: pnpm run check
 
       - name: Build website
         run: pnpm web:build
-
-      - name: Build review UI
-        run: pnpm review:build

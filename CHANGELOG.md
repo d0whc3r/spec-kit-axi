@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/d0whc3r/spec-kit-axi/compare/v1.1.0...v1.1.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* improve web-review design ([78ac4a0](https://github.com/d0whc3r/spec-kit-axi/commit/78ac4a0c54fb1b4b421f2a4704c0a3cc3edeb511))
+
 # [1.1.0](https://github.com/d0whc3r/spec-kit-axi/compare/v1.0.0...v1.1.0) (2026-06-29)
 
 

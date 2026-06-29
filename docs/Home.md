@@ -8,16 +8,16 @@ truth, and the reviewer's notes never leave the machine.
 
 ## Start here
 
-| Page                                      | When to read                                                              |
-| ----------------------------------------- | ------------------------------------------------------------------------- |
-| [Getting Started](Getting-Started.md)     | First install, zero to your first browser review in five minutes.         |
-| [Commands](Commands.md)                   | Deep reference for `/speckit.axi.review` and the review server it drives. |
-| [Workflow](Workflow.md)                   | How a review flows: feature resolution, the annotate and apply loop.      |
-| [Examples](Examples.md)                   | A worked review session: a queue of notes and the edits it produces.      |
-| [Annotation Format](Annotation-Format.md) | The TOON queue the reviewer sends and how each field maps to an edit.     |
-| [Troubleshooting](Troubleshooting.md)     | Server, browser, port, and offline issues, with their fixes.              |
-| [FAQ](FAQ.md)                             | Conceptual questions and design rationale.                                |
-| [Architecture](Architecture.md)           | How the command and the local review server work when you run them.       |
+| Page                                      | When to read                                                               |
+| ----------------------------------------- | -------------------------------------------------------------------------- |
+| [Getting Started](Getting-Started.md)     | First install, zero to your first browser review in five minutes.          |
+| [Commands](Commands.md)                   | Deep reference for `/speckit.axi.review` and the review server it drives.  |
+| [Workflow](Workflow.md)                   | How a review flows: feature resolution, the annotate and apply loop.       |
+| [Examples](Examples.md)                   | A worked review session: a queue of notes and the edits it produces.       |
+| [Annotation Format](Annotation-Format.md) | The TOON queue the reviewer sends and how each field maps to an edit.      |
+| [Troubleshooting](Troubleshooting.md)     | Server, browser, port, and offline issues, with their fixes.               |
+| [FAQ](FAQ.md)                             | Conceptual questions and design rationale.                                 |
+| [Architecture](Architecture.md)           | How it works at runtime: the technology stack and how information travels. |
 
 ## The command at a glance
 

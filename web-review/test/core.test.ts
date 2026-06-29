@@ -12,6 +12,7 @@ import {
   queueDeserialize,
   toonField,
   toonQueue,
+  lineDiff,
 } from "../src/core/index.ts";
 
 const MD = `# Title
@@ -163,4 +164,22 @@ test("toonQueue encodes anno + chat rows with the header", () => {
       "  chat,-,-,0,-,tighten scope",
     ].join("\n"),
   );
+});
+
+test("lineDiff marks added, removed, and unchanged lines", () => {
+  const before = "a\nb\nc\n";
+  const after = "a\nB\nc\nd\n";
+  assert.deepEqual(lineDiff(before, after), [
+    { type: "same", text: "a" },
+    { type: "del", text: "b" },
+    { type: "add", text: "B" },
+    { type: "same", text: "c" },
+    { type: "add", text: "d" },
+    { type: "same", text: "" },
+  ]);
+});
+
+test("lineDiff on identical input is all 'same'", () => {
+  const md = "# Title\n\nbody\n";
+  assert.ok(lineDiff(md, md).every((op) => op.type === "same"));
 });

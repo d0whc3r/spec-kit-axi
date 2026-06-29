@@ -8,6 +8,8 @@ import {
   queueEl,
   qcountEl,
   sendBtn,
+  sendLabelEl,
+  addNoteBtn,
   composerInput,
   introEl,
   messagesEl,
@@ -49,6 +51,13 @@ export function updateSendBtn(): void {
   } else {
     sendBtn.title = n ? `Send ${n} note${n === 1 ? "" : "s"} to the agent` : "Send to the agent";
   }
+  sendLabelEl.textContent = n ? `Send ${n} note${n === 1 ? "" : "s"} to agent` : "Send to agent";
+}
+
+// The "+" button only stages what is typed, so it tracks the input, not the
+// queue. (The send button below it dispatches the whole list to the agent.)
+export function updateAddBtn(): void {
+  addNoteBtn.disabled = store.ended || composerInput.value.trim().length === 0;
 }
 
 // A clear, non-blocking line above the composer that explains what happens to

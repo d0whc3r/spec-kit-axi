@@ -10,6 +10,19 @@ import { buttonVariants } from "@/components/ui/button.astro";
 ---
 
 <main class="min-w-0 lg:overflow-y-auto">
+  <div
+    id="change-bar"
+    hidden
+    class="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-success/40 bg-background/95 px-6 py-2 text-sm backdrop-blur"
+  >
+    <span class="flex items-center gap-2 text-muted-foreground">
+      <span class="size-2 shrink-0 rounded-full bg-success"></span>
+      <span data-text>The agent changed this file since you sent the notes.</span>
+    </span>
+    <button id="diff-toggle" type="button" class={buttonVariants({ variant: "outline", size: "sm" })}>
+      View changes
+    </button>
+  </div>
   <article id="doc" class="md-body mx-auto w-full max-w-3xl px-6 py-8"></article>
 </main>
 
@@ -216,5 +229,61 @@ import { buttonVariants } from "@/components/ui/button.astro";
     padding: 0.9rem;
     text-align: center;
     margin: 0 0 0.85rem;
+  }
+
+  /* Line diff of the markdown source, shown when the agent changed the file and
+     the reviewer toggles "View changes". Added lines (what it says now) are
+     green; removed lines (what it said before) are red. */
+  .diff-view {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .diff-line {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .diff-sign {
+    flex-shrink: 0;
+    width: 1ch;
+    opacity: 0.5;
+    user-select: none;
+  }
+
+  .diff-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .diff-same {
+    color: var(--muted);
+  }
+
+  .diff-add {
+    background: color-mix(in srgb, var(--success) 16%, transparent);
+    color: var(--fg);
+  }
+
+  .diff-del {
+    background: color-mix(in srgb, var(--danger) 16%, transparent);
+    color: var(--fg);
+  }
+
+  .diff-add .diff-sign {
+    color: var(--success);
+    opacity: 1;
+  }
+
+  .diff-del .diff-sign {
+    color: var(--danger);
+    opacity: 1;
   }
 </style>

@@ -8,7 +8,9 @@
 
 export type { ItemKind, QueueItem } from "./queue.ts";
 export type { QuoteLocation } from "./annotation.ts";
+export type { DiffOp } from "./diff.ts";
 
 export { nearestHeading, findQuote, captureAnnotation, chatItem } from "./annotation.ts";
 export { queueAdd, queueEdit, queueRemove, queueSerialize, queueDeserialize } from "./queue.ts";
 export { toonField, toonQueue } from "./toon.ts";
+export { lineDiff } from "./diff.ts";

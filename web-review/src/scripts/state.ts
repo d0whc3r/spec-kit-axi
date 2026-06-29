@@ -13,6 +13,12 @@ export const store = {
   ended: false,
   processing: false,
   pendingSend: false, // a send was requested while the agent was busy; auto-flush when it frees
+  // Change tracking: a snapshot of every artifact taken when the queue is sent
+  // (the "before"), the set of files the agent has since changed, and whether
+  // the document column is currently showing the diff instead of the render.
+  baseline: null as Record<string, string> | null,
+  changed: new Set<string>(),
+  diffMode: false,
 };
 
 const TITLES: Record<string, string> = {

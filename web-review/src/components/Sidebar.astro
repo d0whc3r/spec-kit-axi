@@ -46,10 +46,16 @@ import Button, { buttonVariants } from "@/components/ui/button.astro";
     type="button"
     data-nav-item
     class={buttonVariants({ variant: "ghost", size: "sm" }) +
-      " w-full shrink-0 justify-start font-normal text-muted-foreground aria-[current=page]:bg-primary/10 aria-[current=page]:font-semibold aria-[current=page]:text-primary max-lg:w-auto"}
+      " relative w-full shrink-0 justify-start font-normal text-muted-foreground aria-[current=page]:bg-primary/10 aria-[current=page]:font-semibold aria-[current=page]:text-primary max-lg:w-auto"}
   >
     <span data-label></span>
     <span data-abbr aria-hidden="true"></span>
+    <span
+      data-changed-dot
+      hidden
+      class="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-success"
+      title="Changed by the agent"
+    ></span>
   </button>
 </template>
 

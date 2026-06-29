@@ -4,8 +4,16 @@
 
 import { store } from "./state.ts";
 import { statusEl, statusDotEl, statusTextEl, threadEl, messagesEl, tpl } from "./dom.ts";
-import { renderQueue, saveQueue, updateSendBtn, updateIntro, updateBusyHint } from "./queue.ts";
+import {
+  renderQueue,
+  saveQueue,
+  updateSendBtn,
+  updateAddBtn,
+  updateIntro,
+  updateBusyHint,
+} from "./queue.ts";
 import { loadDoc } from "./doc.ts";
+import { captureBaseline, refreshChanges } from "./diff.ts";
 
 const STATUS_BASE =
   "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors";
@@ -78,6 +86,9 @@ async function flush(): Promise<void> {
     store.pendingSend = false;
     return;
   }
+  // Snapshot every artifact now so we can show, on reload, what the agent
+  // changed in response to this batch.
+  await captureBaseline();
   try {
     const res = await fetch("/api/send", {
       method: "POST",
@@ -118,10 +129,12 @@ export function connectEvents(): void {
     if (store.ended) store.processing = false;
     renderStatus();
     updateSendBtn();
+    updateAddBtn();
     updateBusyHint();
   });
-  es.addEventListener("reload", () => {
-    if (store.currentFile) loadDoc(store.currentFile, { preserveScroll: true });
+  es.addEventListener("reload", async () => {
+    await refreshChanges();
+    if (store.currentFile) await loadDoc(store.currentFile, { preserveScroll: true });
     setProcessing(false);
   });
   es.addEventListener("reply", (e) => {
@@ -134,6 +147,7 @@ export function connectEvents(): void {
     store.pendingSend = false;
     renderStatus();
     updateSendBtn();
+    updateAddBtn();
     updateBusyHint();
     addMessage("The agent ended this review session.", { system: true });
   });

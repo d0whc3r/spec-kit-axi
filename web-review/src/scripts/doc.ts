@@ -44,7 +44,8 @@ function decorateLinks(): void {
 }
 
 // Delegated handler: clicking an in-feature link loads that artifact instead
-// of doing a full-page navigation. Attached once at startup.
+// of doing a full-page navigation. Also wires browser back/forward to the
+// per-artifact history entries that loadDoc pushes. Attached once at startup.
 export function setupDocLinks(): void {
   docEl.addEventListener("click", (e) => {
     const a = (e.target as HTMLElement).closest("a");
@@ -54,6 +55,12 @@ export function setupDocLinks(): void {
       e.preventDefault();
       loadDoc(target);
     }
+  });
+  addEventListener("popstate", (e) => {
+    const name =
+      (e.state as { file?: string } | null)?.file ??
+      new URLSearchParams(location.search).get("file");
+    if (name && store.files.includes(name)) loadDoc(name, { history: "skip" });
   });
 }
 
@@ -70,12 +77,22 @@ function showSkeleton(): void {
   docEl.appendChild(tpl("tpl-doc-skeleton"));
 }
 
-export async function loadDoc(name: string, { preserveScroll = false } = {}): Promise<void> {
+export async function loadDoc(
+  name: string,
+  {
+    preserveScroll = false,
+    history: hist = "push",
+  }: { preserveScroll?: boolean; history?: "push" | "replace" | "skip" } = {},
+): Promise<void> {
   const scrollTop = mainEl.scrollTop;
+  const prev = store.currentFile;
   store.currentFile = name;
   for (const b of navEl.children) {
     b.setAttribute("aria-current", (b as HTMLElement).dataset.file === name ? "page" : "false");
   }
+  const url = `?file=${encodeURIComponent(name)}`;
+  if (hist === "replace") history.replaceState({ file: name }, "", url);
+  else if (hist === "push" && name !== prev) history.pushState({ file: name }, "", url);
   if (!preserveScroll) showSkeleton();
   try {
     store.currentMd = await (await fetch(`/md/${encodeURIComponent(name)}`)).text();

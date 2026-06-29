@@ -44,7 +44,9 @@ async function init(): Promise<void> {
     b.addEventListener("click", () => loadDoc(name));
     navEl.appendChild(b);
   }
-  loadDoc(manifest.files[0]);
+  const requested = new URLSearchParams(location.search).get("file");
+  const initial = requested && manifest.files.includes(requested) ? requested : manifest.files[0];
+  loadDoc(initial, { history: "replace" });
 }
 
 init();

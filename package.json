@@ -20,7 +20,8 @@
   },
   "scripts": {
     "oxfmt": "oxfmt --no-error-on-unmatched-pattern",
-    "lint": "pnpm run oxfmt --check",
+    "lint:fix": "oxlint --no-error-on-unmatched-pattern --fix --fix-suggestions",
+    "lint": "oxfmt --no-error-on-unmatched-pattern --check && oxlint",
     "lint:content": "node .github/scripts/lint-content.mjs",
     "test": "pnpm --filter @spec-kit-axi/web-review test",
     "format": "pnpm run oxfmt --write",
@@ -49,6 +50,7 @@
     "husky": "9.1.7",
     "lint-staged": "17.0.8",
     "oxfmt": "0.56.0",
+    "oxlint": "1.71.0",
     "semantic-release": "25.0.5",
     "zx": "8.8.5"
   },

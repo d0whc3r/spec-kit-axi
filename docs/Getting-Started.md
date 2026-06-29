@@ -31,7 +31,7 @@ needs no catalog setup and always works:
 
 ```bash
 specify extension add axi --from \
-  https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.2/axi-1.1.2.zip
+  https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.3/axi-1.1.3.zip
 ```
 
 Change the version in the URL to pin a different release.

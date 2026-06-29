@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/d0whc3r/spec-kit-axi/compare/v1.1.2...v1.1.3) (2026-06-29)
+
+
+### Bug Fixes
+
+* web-review as template ([a9489ea](https://github.com/d0whc3r/spec-kit-axi/commit/a9489eaa2851101a51af15a291117b9838e4f69d))
+
 ## [1.1.2](https://github.com/d0whc3r/spec-kit-axi/compare/v1.1.1...v1.1.2) (2026-06-29)
 
 

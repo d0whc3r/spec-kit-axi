@@ -4,7 +4,7 @@
 
 import { store } from "./state.ts";
 import { statusEl, statusDotEl, statusTextEl, threadEl, messagesEl, tpl } from "./dom.ts";
-import { renderQueue, saveQueue, updateSendBtn, updateIntro } from "./queue.ts";
+import { renderQueue, saveQueue, updateSendBtn, updateIntro, updateBusyHint } from "./queue.ts";
 import { loadDoc } from "./doc.ts";
 
 const STATUS_BASE =
@@ -12,7 +12,7 @@ const STATUS_BASE =
 const STATUS = {
   off: { text: "agent not connected", cls: "border-border text-muted-foreground", pulse: false },
   ready: { text: "agent ready", cls: "border-success/40 text-success", pulse: false },
-  working: { text: "working…", cls: "border-primary/40 text-primary", pulse: true },
+  working: { text: "agent working…", cls: "border-primary/40 text-primary", pulse: true },
   ended: { text: "session ended", cls: "border-border text-muted-foreground", pulse: false },
 };
 
@@ -49,6 +49,10 @@ export function setProcessing(v: boolean): void {
   else hideTyping();
   updateIntro();
   renderStatus();
+  updateSendBtn();
+  updateBusyHint();
+  // The agent just freed up: flush any batch the user queued while it was busy.
+  if (!v && store.pendingSend && store.items.length && !store.ended) flush();
 }
 
 export function addMessage(text: string, { system = false } = {}): void {
@@ -67,8 +71,13 @@ export function addMessage(text: string, { system = false } = {}): void {
   updateIntro();
 }
 
-export async function send(): Promise<void> {
-  if (!store.items.length || store.ended) return;
+// Hand the staged batch to the agent. Internal: the busy/ended gating lives in
+// send().
+async function flush(): Promise<void> {
+  if (!store.items.length || store.ended) {
+    store.pendingSend = false;
+    return;
+  }
   try {
     const res = await fetch("/api/send", {
       method: "POST",
@@ -80,9 +89,24 @@ export async function send(): Promise<void> {
     return;
   }
   store.items = []; // handed off to the agent
+  store.pendingSend = false;
   saveQueue();
   renderQueue();
   setProcessing(true);
+}
+
+// User pressed send. If the agent is busy, queue the batch and surface that it
+// will go out automatically once the agent frees, rather than blocking or
+// firing a second request at a working agent.
+export function send(): void {
+  if (store.ended || !store.items.length) return;
+  if (store.processing) {
+    store.pendingSend = true;
+    updateSendBtn();
+    updateBusyHint();
+    return;
+  }
+  flush();
 }
 
 export function connectEvents(): void {
@@ -94,6 +118,7 @@ export function connectEvents(): void {
     if (store.ended) store.processing = false;
     renderStatus();
     updateSendBtn();
+    updateBusyHint();
   });
   es.addEventListener("reload", () => {
     if (store.currentFile) loadDoc(store.currentFile, { preserveScroll: true });
@@ -106,8 +131,10 @@ export function connectEvents(): void {
   es.addEventListener("ended", () => {
     store.ended = true;
     store.processing = false;
+    store.pendingSend = false;
     renderStatus();
     updateSendBtn();
+    updateBusyHint();
     addMessage("The agent ended this review session.", { system: true });
   });
 }

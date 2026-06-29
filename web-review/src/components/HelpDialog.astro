@@ -1,0 +1,27 @@
+---
+import { buttonVariants } from "@/components/ui/button.astro";
+---
+
+<dialog
+  id="help"
+  class="m-auto w-[min(34rem,calc(100vw-2rem))] rounded-lg border border-border bg-background p-0 text-foreground shadow-lg backdrop:bg-black/50"
+>
+  <form method="dialog">
+    <div class="flex items-center justify-between border-b border-border px-5 py-4">
+      <h2 class="text-base font-semibold">How axi works</h2>
+      <button value="close" aria-label="Close" class={buttonVariants({ variant: "ghost", size: "icon" }) + " size-8"}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <ol class="m-0 list-decimal space-y-2.5 px-7 py-5 leading-relaxed">
+      <li><strong>Read</strong> the spec, plan, and tasks using the artifact list on the left.</li>
+      <li><strong>Annotate</strong> by selecting any text in the document, then writing a note about that exact passage.</li>
+      <li><strong>Comment</strong> on the whole feature by typing in the box and pressing Enter. Notes stack up in the panel.</li>
+      <li><strong>Send</strong> the whole batch to the agent with the send button. Anything still typed goes along with it.</li>
+      <li>The agent edits the files and replies here. The document reloads on its own to show the changes.</li>
+    </ol>
+  </form>
+</dialog>

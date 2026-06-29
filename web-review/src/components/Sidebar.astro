@@ -1,0 +1,94 @@
+---
+import Button, { buttonVariants } from "@/components/ui/button.astro";
+
+// Artifact navigation: resizable + collapsible on desktop. The nav items are
+// stamped at runtime from the <template> below so they stay real shadcn markup.
+// The layout/collapse CSS lives here (is:global) because it keys off the parent
+// #shell grid and the runtime-cloned nav items, which carry no scope hash.
+---
+
+<aside
+  class="relative shrink-0 border-b border-border p-3 lg:overflow-y-auto lg:border-b-0 lg:border-r"
+  aria-label="Artifacts"
+>
+  <div class="flex items-center justify-between pb-2">
+    <p data-sidebar-title class="px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      Artifacts
+    </p>
+    <Button
+      id="sidebar-toggle"
+      variant="ghost"
+      size="icon"
+      type="button"
+      class="hidden size-7 shrink-0 text-muted-foreground lg:inline-flex"
+      aria-label="Collapse sidebar"
+      aria-expanded="true"
+    >
+      <svg data-chevron viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+    </Button>
+  </div>
+  <nav id="nav" class="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-x-visible lg:pb-0">
+  </nav>
+  <div
+    id="sidebar-resize"
+    class="absolute right-0 top-0 hidden h-full w-1.5 cursor-col-resize touch-none transition-colors hover:bg-border lg:block"
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Resize sidebar"
+  >
+  </div>
+</aside>
+
+<template id="tpl-nav-item">
+  <button
+    type="button"
+    data-nav-item
+    class={buttonVariants({ variant: "ghost", size: "sm" }) +
+      " w-full shrink-0 justify-start font-normal text-muted-foreground aria-[current=page]:bg-primary/10 aria-[current=page]:font-semibold aria-[current=page]:text-primary max-lg:w-auto"}
+  >
+    <span data-label></span>
+    <span data-abbr aria-hidden="true"></span>
+  </button>
+</template>
+
+<style is:global>
+  /* Resizable / collapsible artifact sidebar (desktop only). The shell grid's
+     first column follows --sidebar-w, driven by sidebar.ts (the resize handle
+     and the collapse toggle). Collapsing hides the labels and shows the
+     single-letter abbreviations in a narrow icon rail. */
+  #nav [data-abbr] {
+    display: none;
+  }
+
+  #shell[data-resizing] {
+    user-select: none;
+    cursor: col-resize;
+  }
+
+  @media (min-width: 1024px) {
+    #shell {
+      grid-template-columns: var(--sidebar-w, 15rem) minmax(0, 1fr) 23rem;
+    }
+
+    #shell[data-collapsed] [data-sidebar-title],
+    #shell[data-collapsed] #nav [data-label],
+    #shell[data-collapsed] #sidebar-resize {
+      display: none;
+    }
+
+    #shell[data-collapsed] #nav [data-abbr] {
+      display: inline;
+    }
+
+    #shell[data-collapsed] #nav [data-nav-item] {
+      justify-content: center;
+      padding-inline: 0;
+    }
+
+    #shell[data-collapsed] [data-chevron] {
+      transform: rotate(180deg);
+    }
+  }
+</style>

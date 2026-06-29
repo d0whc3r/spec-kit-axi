@@ -1,0 +1,220 @@
+---
+import Card from "@/components/ui/card.astro";
+import Skeleton from "@/components/ui/skeleton.astro";
+import { buttonVariants } from "@/components/ui/button.astro";
+
+// The rendered artifact. doc.ts injects sanitized markdown into #doc as
+// innerHTML, so .md-body is styled here with is:global (the injected nodes
+// carry no scope hash). The loading skeleton and the annotate widgets that
+// float over a text selection are stamped from the <template>s below.
+---
+
+<main class="min-w-0 lg:overflow-y-auto">
+  <article id="doc" class="md-body mx-auto w-full max-w-3xl px-6 py-8"></article>
+</main>
+
+<template id="tpl-doc-skeleton">
+  <div class="mx-auto w-full max-w-3xl space-y-4">
+    <Skeleton class="h-8 w-2/3" />
+    <Skeleton class="h-4 w-full" />
+    <Skeleton class="h-4 w-5/6" />
+    <Skeleton class="h-4 w-3/4" />
+    <Skeleton class="mt-6 h-28 w-full" />
+    <Skeleton class="h-4 w-full" />
+    <Skeleton class="h-4 w-4/6" />
+  </div>
+</template>
+
+<template id="tpl-annotate-btn">
+  <button
+    type="button"
+    data-annotate
+    class={buttonVariants({ size: "sm" }) + " fixed z-50 gap-1 shadow-md"}
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 12h14"></path>
+      <path d="M12 5v14"></path>
+    </svg>
+    Note
+  </button>
+</template>
+
+<template id="tpl-note-popover">
+  <div data-popover class="fixed z-50 w-72">
+    <Card class="p-3 shadow-lg">
+      <blockquote data-quote class="mb-2 border-l-2 border-primary/50 pl-2 text-xs italic text-muted-foreground"></blockquote>
+      <textarea
+        data-note
+        rows="3"
+        placeholder="Your note…"
+        class="max-h-60 w-full resize-y rounded-md border border-input bg-background px-2.5 py-1.5 text-sm field-sizing-content placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      ></textarea>
+      <div class="mt-2 flex justify-end gap-2">
+        <button type="button" data-cancel class={buttonVariants({ variant: "ghost", size: "sm" })}>Cancel</button>
+        <button type="button" data-add class={buttonVariants({ size: "sm" })}>Add note</button>
+      </div>
+    </Card>
+  </div>
+</template>
+
+<style is:global>
+  /* Rendered markdown (sanitized HTML injected into the document area). This is
+     the one place styled by element selectors rather than shadcn utilities,
+     because the HTML comes from marked at runtime and carries no classes. */
+  .md-body {
+    word-wrap: break-word;
+  }
+
+  .md-body > *:first-child {
+    margin-top: 0;
+  }
+
+  .md-body h1,
+  .md-body h2,
+  .md-body h3,
+  .md-body h4,
+  .md-body h5,
+  .md-body h6 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 1.6rem 0 0.6rem;
+  }
+
+  .md-body h1 {
+    font-size: 1.7rem;
+  }
+
+  .md-body h2 {
+    font-size: 1.35rem;
+  }
+
+  .md-body h3 {
+    font-size: 1.1rem;
+  }
+
+  .md-body h4 {
+    font-size: 1rem;
+  }
+
+  .md-body h5,
+  .md-body h6 {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .md-body h1,
+  .md-body h2 {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
+  }
+
+  .md-body p {
+    margin: 0 0 0.85rem;
+  }
+
+  .md-body ul,
+  .md-body ol {
+    margin: 0 0 0.85rem;
+    padding-left: 1.5rem;
+  }
+
+  .md-body ul {
+    list-style: disc;
+  }
+
+  .md-body ol {
+    list-style: decimal;
+  }
+
+  .md-body li {
+    margin-bottom: 0.3rem;
+  }
+
+  .md-body li > ul,
+  .md-body li > ol {
+    margin: 0.3rem 0 0.3rem;
+  }
+
+  .md-body blockquote {
+    margin: 0 0 0.85rem;
+    padding: 0.1rem 0 0.1rem 1rem;
+    border-left: 3px solid var(--border);
+    color: var(--muted);
+  }
+
+  .md-body hr {
+    height: 1px;
+    border: 0;
+    background: var(--border);
+    margin: 1.6rem 0;
+  }
+
+  .md-body a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .md-body a:hover {
+    text-decoration: underline;
+  }
+
+  /* In-feature links navigate within the review surface; mark them so they read
+     as artifact links rather than outbound ones. */
+  .md-body a[data-internal] {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+  }
+
+  .md-body img {
+    max-width: 100%;
+  }
+
+  .md-body table {
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+    margin: 0 0 0.85rem;
+  }
+
+  .md-body th,
+  .md-body td {
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.7rem;
+  }
+
+  .md-body th {
+    background: var(--code-bg);
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .md-body pre {
+    background: var(--code-bg);
+    padding: 0.9rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0 0 0.85rem;
+  }
+
+  .md-body code {
+    background: var(--code-bg);
+    padding: 0.15em 0.35em;
+    border-radius: 4px;
+    font-size: 0.875em;
+  }
+
+  .md-body pre code {
+    padding: 0;
+    font-size: inherit;
+    background: none;
+  }
+
+  .md-body .mermaid {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 0.9rem;
+    text-align: center;
+    margin: 0 0 0.85rem;
+  }
+</style>

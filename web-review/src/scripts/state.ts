@@ -6,11 +6,13 @@ import type { QueueItem } from "../core/index.ts";
 
 export const store = {
   items: [] as QueueItem[],
+  files: [] as string[],
   currentFile: null as string | null,
   currentMd: "",
   agentListening: false,
   ended: false,
   processing: false,
+  pendingSend: false, // a send was requested while the agent was busy; auto-flush when it frees
 };
 
 const TITLES: Record<string, string> = {

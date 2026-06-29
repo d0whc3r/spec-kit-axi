@@ -12,21 +12,21 @@
 //
 // Run with `node build-server.ts` (Node strips the types).
 
-import { build } from "esbuild";
+import { build, type BuildOptions } from "esbuild";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const r = (...p: string[]) => path.join(root, ...p);
 
-const common = {
+const common: BuildOptions = {
   bundle: true,
-  format: "esm" as const,
-  platform: "node" as const,
+  format: "esm",
+  platform: "node",
   target: "node22",
   // Readable output: this runs as a debuggable Node script, not a hot path.
   minify: false,
-  legalComments: "none" as const,
+  legalComments: "none",
 };
 
 await build({

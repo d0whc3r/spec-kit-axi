@@ -9,27 +9,18 @@ import { composerInput, composerEl } from "./dom.ts";
 import { renderQueue, saveQueue, updateSendBtn } from "./queue.ts";
 import { send } from "./agent.ts";
 
-function autoGrow(): void {
-  composerInput.style.height = "auto";
-  composerInput.style.height = `${Math.min(composerInput.scrollHeight, 144)}px`;
-}
-
 function stageComment(): boolean {
   const v = composerInput.value.trim();
   if (!v) return false;
   store.items = queueAdd(store.items, chatItem(v));
-  composerInput.value = "";
-  autoGrow();
+  composerInput.value = ""; // CSS field-sizing shrinks it back to one row
   saveQueue();
   renderQueue();
   return true;
 }
 
 export function setupComposer(): void {
-  composerInput.addEventListener("input", () => {
-    autoGrow();
-    updateSendBtn();
-  });
+  composerInput.addEventListener("input", updateSendBtn);
 
   composerInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {

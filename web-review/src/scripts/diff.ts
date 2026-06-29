@@ -51,6 +51,9 @@ export function markChangedTabs(): void {
 const esc = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// [css class, gutter sign] per diff op type.
+const STYLE = { add: ["diff-add", "+"], del: ["diff-del", "-"], same: ["diff-same", " "] } as const;
+
 // A unified, colored line diff: green for what the file says now, red for what
 // it said before. Returned as HTML injected into the document column.
 export function renderDiffHtml(before: string, after: string): string {
@@ -60,8 +63,7 @@ export function renderDiffHtml(before: string, after: string): string {
   }
   const rows = ops
     .map((o) => {
-      const cls = o.type === "add" ? "diff-add" : o.type === "del" ? "diff-del" : "diff-same";
-      const sign = o.type === "add" ? "+" : o.type === "del" ? "-" : " ";
+      const [cls, sign] = STYLE[o.type];
       return `<div class="diff-line ${cls}"><span class="diff-sign">${sign}</span><span class="diff-text">${esc(o.text) || "&nbsp;"}</span></div>`;
     })
     .join("");

@@ -53,20 +53,29 @@ async function readArrayBody(req: IncomingMessage): Promise<unknown[] | null> {
   }
 }
 
+// A bare status + body response (no content-type). The JSON sibling is `json`.
+function send(res: ServerResponse, code: number, body = ""): void {
+  res.writeHead(code);
+  res.end(body);
+}
+
+// Stream a file with the given content-type, or 404 if it cannot be read.
+async function serveFile(res: ServerResponse, full: string, contentType: string): Promise<void> {
+  try {
+    const body = await readFile(full);
+    res.writeHead(200, { "content-type": contentType });
+    res.end(body);
+  } catch {
+    send(res, 404, "not found");
+  }
+}
+
 async function serveStatic(relPath: string, res: ServerResponse): Promise<void> {
   const full = path.normalize(path.join(WEB_DIR, relPath));
   if (full !== WEB_DIR && !full.startsWith(WEB_DIR + path.sep)) {
-    res.writeHead(403);
-    return void res.end("forbidden");
+    return send(res, 403, "forbidden");
   }
-  try {
-    const body = await readFile(full);
-    res.writeHead(200, { "content-type": MIME[path.extname(full)] ?? "application/octet-stream" });
-    res.end(body);
-  } catch {
-    res.writeHead(404);
-    res.end("not found");
-  }
+  return serveFile(res, full, MIME[path.extname(full)] ?? "application/octet-stream");
 }
 
 interface Session {
@@ -104,32 +113,18 @@ export function runServer(featureDir: string, port: number): void {
 
     if (pathname.startsWith("/md/")) {
       const full = resolveMarkdown(featureDir, decodeURIComponent(pathname.slice("/md/".length)));
-      if (!full) {
-        res.writeHead(404);
-        return res.end("unknown file");
-      }
-      try {
-        const body = await readFile(full);
-        res.writeHead(200, { "content-type": "text/markdown; charset=utf-8" });
-        return res.end(body);
-      } catch {
-        res.writeHead(404);
-        return res.end("not found");
-      }
+      if (!full) return send(res, 404, "unknown file");
+      return serveFile(res, full, "text/markdown; charset=utf-8");
     }
 
     if (pathname === "/api/queue") {
       const file = queuePath(featureDir);
       if (req.method === "PUT") {
         const items = await readArrayBody(req);
-        if (!items) {
-          res.writeHead(400);
-          return res.end("invalid queue");
-        }
+        if (!items) return send(res, 400, "invalid queue");
         await mkdir(stateDir(featureDir), { recursive: true });
         await writeFile(file, JSON.stringify(items, null, 2));
-        res.writeHead(204);
-        return res.end();
+        return send(res, 204);
       }
       res.writeHead(200, { "content-type": MIME[".json"] });
       try {
@@ -157,15 +152,11 @@ export function runServer(featureDir: string, port: number): void {
     // Browser flushes its queue (the Send button).
     if (pathname === "/api/send" && req.method === "POST") {
       const items = await readArrayBody(req);
-      if (!items) {
-        res.writeHead(400);
-        return res.end("invalid");
-      }
+      if (!items) return send(res, 400, "invalid");
       const waiter = session.pollWaiters.shift();
       if (waiter) waiter(items);
       else session.sent = items;
-      res.writeHead(204);
-      return res.end();
+      return send(res, 204);
     }
 
     // Agent long-poll: returns the sent queue, blocking until there is one.
@@ -200,8 +191,7 @@ export function runServer(featureDir: string, port: number): void {
     if (pathname === "/api/reply" && req.method === "POST") {
       const { text } = JSON.parse((await readBody(req)) || "{}");
       broadcast("reply", { text: text ?? "" });
-      res.writeHead(204);
-      return res.end();
+      return send(res, 204);
     }
 
     // End the session.
@@ -209,13 +199,11 @@ export function runServer(featureDir: string, port: number): void {
       session.ended = true;
       for (const w of session.pollWaiters.splice(0)) w([]);
       broadcast("ended", {});
-      res.writeHead(204);
-      return res.end();
+      return send(res, 204);
     }
 
     if (pathname === "/api/shutdown" && req.method === "POST") {
-      res.writeHead(204);
-      res.end();
+      send(res, 204);
       server.close();
       return process.exit(0);
     }
@@ -224,8 +212,7 @@ export function runServer(featureDir: string, port: number): void {
     // favicon). serveStatic confines reads to WEB_DIR.
     if (req.method === "GET") return serveStatic(pathname, res);
 
-    res.writeHead(404);
-    res.end("not found");
+    send(res, 404, "not found");
   });
 
   // Live reload: watch the feature's files (debounced).

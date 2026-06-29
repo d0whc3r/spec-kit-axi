@@ -120,6 +120,14 @@ export function send(): void {
   flush();
 }
 
+// Re-sync the controls that depend on the session flags (agentListening/ended).
+function refreshControls(): void {
+  renderStatus();
+  updateSendBtn();
+  updateAddBtn();
+  updateBusyHint();
+}
+
 export function connectEvents(): void {
   const es = new EventSource("/api/events");
   es.addEventListener("status", (e) => {
@@ -127,10 +135,7 @@ export function connectEvents(): void {
     store.agentListening = s.agentListening;
     store.ended = s.ended;
     if (store.ended) store.processing = false;
-    renderStatus();
-    updateSendBtn();
-    updateAddBtn();
-    updateBusyHint();
+    refreshControls();
   });
   es.addEventListener("reload", async () => {
     await refreshChanges();
@@ -145,10 +150,7 @@ export function connectEvents(): void {
     store.ended = true;
     store.processing = false;
     store.pendingSend = false;
-    renderStatus();
-    updateSendBtn();
-    updateAddBtn();
-    updateBusyHint();
+    refreshControls();
     addMessage("The agent ended this review session.", { system: true });
   });
 }

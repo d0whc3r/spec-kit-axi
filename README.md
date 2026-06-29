@@ -84,6 +84,12 @@ For prerequisites and the first-run walkthrough see [Getting Started](https://gi
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Credits
+
+Axi was inspired by [lavish-axi](https://github.com/kunchenguid/lavish-axi),
+and its agent-facing command line is built on the [AXI](https://axi.md)
+conventions for tools that agents drive over a shell.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

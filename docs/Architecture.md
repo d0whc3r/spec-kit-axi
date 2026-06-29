@@ -42,6 +42,11 @@ The pieces are deliberately small and dependency-light.
 At runtime nothing leaves your machine except the renderer's CDN fetch. The
 markdown and your notes are served only over loopback.
 
+The agent-facing command line follows the [AXI](https://axi.md) conventions
+for tools that agents drive over a shell, which is where the TOON output and
+the content-first command responses come from. The review surface itself was
+inspired by [lavish-axi](https://github.com/kunchenguid/lavish-axi).
+
 ## How a review is invoked
 
 ```text

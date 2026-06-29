@@ -54,7 +54,7 @@ Format](Annotation-Format.md) for the shape of the queue.
 ## The review server
 
 `/speckit.axi.review` drives a small Node tool that ships with the extension at
-`web-review/axi-server.mjs`. It uses only the Node standard library
+`.specify/extensions/axi/templates/web-review/axi-server.mjs`. It uses only the Node standard library
 (zero dependencies) and binds only to `127.0.0.1`. You never call these
 subcommands by hand; the agent does, while you stay in the browser. They are
 documented here so you understand what the agent is doing.
@@ -67,9 +67,9 @@ documented here so you understand what the agent is doing.
 | `end <feature-dir>`             | End the session. The next poll returns the ended state.             |
 | `stop [feature-dir]`            | Shut the server down. With no argument, stops every running server. |
 
-The CLI is `node web-review/axi-server.mjs <subcommand>`. Run it with no
-arguments to list active sessions, or any subcommand with `--help` for its
-flags and examples.
+The CLI is `node .specify/extensions/axi/templates/web-review/axi-server.mjs <subcommand>`,
+run from the project root. Run it with no arguments to list active sessions, or
+any subcommand with `--help` for its flags and examples.
 
 ### `start` flags
 

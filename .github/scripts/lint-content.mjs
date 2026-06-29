@@ -1,15 +1,7 @@
-// Pipeline: lint extension content (markdown templates and command bodies).
+// Pipeline: lint extension content (shipped command bodies).
 //
-// Per template:
-//   - No em dash.
-//   - Canonical mandatory headings present and in order.
-//   - Optional headings (when present) appear after the mandatory ones and in
-//     declared order. Optional headings may carry a " _(optional)_" suffix.
-//   - The command file references the template and any extra refs.
-//   - No banned AI-tell phrases.
-// Each shipped command is linted for the same prose rules (no em dash, no
-// banned phrases).
-// Then an oxfmt --check pass over commands, templates, and README.
+// Each shipped command is linted for prose rules (no em dash, no banned
+// AI-tell phrases). Then an oxfmt --check pass over commands and README.
 //
 // Usage: node lint-content.mjs
 
@@ -22,22 +14,9 @@ const log = logger("lint-content");
 
 const BANNED_PHRASES = ["delve", "tapestry", "in essence", "navigate the landscape"];
 
-// Shipped command bodies are linted for the same prose rules as templates
+// Shipped command bodies are linted for prose rules
 // (AGENTS.md "Agent Boundaries" rule 4: no em dashes, plain English).
 const COMMANDS = ["commands/speckit.axi.review.md"];
-
-// Each entry pairs a shipped reference template with the command that must
-// point executors at it. `mandatory` lists the template's stable top-level
-// headings in canonical order.
-const TEMPLATES = [
-  {
-    template: "templates/axi-template.md",
-    command: "commands/speckit.axi.review.md",
-    mandatory: ["Template"],
-    optional: [],
-    extraRefs: [],
-  },
-];
 
 const read = (rel) => fs.readFileSync(path.join(repoRoot, rel), "utf8");
 const exists = (rel) => fs.existsSync(path.join(repoRoot, rel));
@@ -52,61 +31,12 @@ function lintProse(rel, text, fail) {
   }
 }
 
-// 1-based line of the first heading line, or 0 if absent.
-function headingLine(lines, heading) {
-  const idx = lines.findIndex((l) => l === `## ${heading}` || l === `## ${heading} _(optional)_`);
-  return idx === -1 ? 0 : idx + 1;
-}
-
-function lintTemplate(spec, fail) {
-  if (!exists(spec.template)) {
-    fail(`${spec.template} missing`);
-    return;
-  }
-  const text = read(spec.template);
-  const lines = text.split("\n");
-
-  lintProse(spec.template, text, fail);
-
-  // Single ordered cursor across mandatory then optional headings.
-  let last = 0;
-  const checkOrder = (headings, required) => {
-    for (const h of headings) {
-      const line = headingLine(lines, h);
-      if (line === 0) {
-        if (required) fail(`missing mandatory heading in ${spec.template}: ## ${h}`);
-        continue;
-      }
-      if (line <= last) {
-        fail(
-          `heading out of canonical order in ${spec.template}: ## ${h} (line ${line}, previous at ${last})`,
-        );
-      }
-      last = line;
-    }
-  };
-  checkOrder(spec.mandatory, true);
-  checkOrder(spec.optional, false);
-
-  // Command file references.
-  if (!exists(spec.command)) {
-    fail(`${spec.command} missing`);
-  } else {
-    const cmd = read(spec.command);
-    for (const ref of [spec.template, ...spec.extraRefs]) {
-      if (!cmd.includes(ref)) fail(`${spec.command} does not reference ${ref}`);
-    }
-  }
-}
-
 export async function lintContent() {
   let failed = false;
   const fail = (msg) => {
     log.fail(msg);
     failed = true;
   };
-
-  for (const spec of TEMPLATES) lintTemplate(spec, fail);
 
   for (const cmd of COMMANDS) {
     if (!exists(cmd)) fail(`${cmd} missing`);
@@ -118,7 +48,6 @@ export async function lintContent() {
   if (fs.existsSync(oxfmt)) {
     const res = await $({ cwd: repoRoot, nothrow: true })`${oxfmt} --check ${[
       "commands/**/*.md",
-      "templates/**/*.md",
       "README.md",
     ]}`;
     if (res.exitCode !== 0) fail("oxfmt reported unformatted markdown files");

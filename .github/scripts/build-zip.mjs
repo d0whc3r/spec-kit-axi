@@ -5,6 +5,11 @@
 // entries sorted and timestamped to the tagged commit (or SOURCE_DATE_EPOCH)
 // for reproducibility. Then unpacks the zip and re-validates it.
 //
+// The Node review server + its Astro browser surface ship under
+// templates/web-review (populated by `pnpm review:build` before this runs), so
+// templates/** carries them; the extension installs to .specify/extensions/axi/
+// and the server runs from .specify/extensions/axi/templates/web-review.
+//
 // Usage: node build-zip.mjs
 
 import path from "node:path";
@@ -16,19 +21,11 @@ import { logger } from "./lib/log.mjs";
 
 const log = logger("build-zip");
 
-// Only these paths belong in the extension zip. The Astro review UI is shipped
-// as its build output under web-review/dist (populated by `astro build` before
-// this runs); its server runs from web-review and serves that dist.
-const INCLUDE = [
-  "extension.yml",
-  "README.md",
-  "LICENSE",
-  "commands/**/*",
-  "templates/**/*",
-  "web-review/axi-server.mjs",
-  "web-review/axi-core.mjs",
-  "web-review/dist/**/*",
-];
+// Only these paths belong in the extension zip. The Node review server and its
+// Astro browser surface are shipped as build output under templates/web-review
+// (axi-server.mjs, axi-core.mjs, dist/**), populated by `pnpm review:build`
+// before this runs and covered by the templates/** glob below.
+const INCLUDE = ["extension.yml", "README.md", "LICENSE", "commands/**/*", "templates/**/*"];
 
 async function reproducibleEpoch() {
   if (process.env.SOURCE_DATE_EPOCH) return Number(process.env.SOURCE_DATE_EPOCH);

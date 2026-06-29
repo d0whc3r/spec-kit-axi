@@ -7,17 +7,15 @@ artifacts of a feature while an agent drives the conversation.
 Everything is TypeScript under `src/`. The shipped runtime is **two compiled,
 zero-dependency ESM files that Node runs directly** (`axi-core.mjs` and
 `axi-server.mjs`), produced by esbuild. The browser surface is bundled by Astro
-to `dist/`. Both outputs are what the release zip and `validate-manifest`
-expect at those exact paths.
+to `dist/`. All three are emitted to `../templates/web-review/` (not committed),
+so the repo and the release zip share one layout; that is where the release zip
+and `validate-manifest` expect them.
 
 ## Project structure
 
 ```text
 web-review/
-├── axi-core.mjs        # build output: pure helpers (also used by the test)
-├── axi-server.mjs      # build output: CLI + review server, loads axi-core.mjs at runtime
 ├── build-server.ts     # esbuild script that produces the two .mjs files
-├── dist/               # astro build output (the browser surface)
 └── src/
     ├── core/           # pure helpers shared by browser, server, and test (esbuild -> axi-core.mjs)
     ├── server/         # review server + agent CLI; cli.ts is the entry (esbuild -> axi-server.mjs)

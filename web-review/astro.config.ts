@@ -4,11 +4,12 @@ import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 
 // The review UI is a static single page that talks to the axi review server
-// (web-review/axi-server.mjs) over fetch + Server-Sent Events. During
+// (templates/web-review/axi-server.mjs) over fetch + Server-Sent Events. During
 // `astro dev` those endpoints do not exist locally, so they are proxied to a
-// running review server. Start one on the fixed dev port first:
+// running review server. Build first (`pnpm review:build`), then start one on
+// the fixed dev port:
 //
-//   node web-review/axi-server.mjs serve <feature-dir> --port 4317
+//   node templates/web-review/axi-server.mjs serve <feature-dir> --port 4317
 //
 const AXI_SERVER = "http://127.0.0.1:4317";
 
@@ -20,9 +21,9 @@ const axiCore = fileURLToPath(new URL("./src/core/index.ts", import.meta.url));
 // https://astro.build/config
 export default defineConfig({
   // The build output is the extension's shipped static surface. It is written
-  // to web-review/dist (gitignored, populated only by the build), next to the
-  // axi-server.mjs that serves it.
-  outDir: fileURLToPath(new URL("./dist", import.meta.url)),
+  // to templates/web-review/dist (gitignored, populated only by the build),
+  // next to the axi-server.mjs that serves it.
+  outDir: fileURLToPath(new URL("../templates/web-review/dist", import.meta.url)),
   vite: {
     plugins: [tailwindcss()],
     resolve: {

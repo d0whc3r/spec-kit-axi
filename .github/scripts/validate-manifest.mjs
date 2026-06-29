@@ -27,9 +27,8 @@ const REQUIRED = [
   "README.md",
   "LICENSE",
   "commands/speckit.axi.review.md",
-  "templates/axi-template.md",
-  "web-review/axi-server.mjs",
-  "web-review/axi-core.mjs",
+  "templates/web-review/axi-server.mjs",
+  "templates/web-review/axi-core.mjs",
 ];
 
 // Returns true on success, false on any failure (logging each problem).

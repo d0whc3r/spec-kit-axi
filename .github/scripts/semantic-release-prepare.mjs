@@ -76,8 +76,8 @@ export async function prepare(version) {
   // keep the version-bumped package.json formatted alongside the rest
   await format(PATHS.pkg);
 
-  // build the Astro review UI into web-review/dist (the shipped static
-  // surface), then the deterministic zip, then update the catalog
+  // build the review server + Astro UI into templates/web-review (the shipped
+  // runtime), then the deterministic zip, then update the catalog
   await $({ cwd: repoRoot })`pnpm review:build`;
   await buildZip();
   await updateCatalog({ version, downloadUrl: url });

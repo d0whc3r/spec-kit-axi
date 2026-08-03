@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/d0whc3r/spec-kit-axi/compare/v1.1.3...v1.1.4) (2026-08-03)
+
+
+### Bug Fixes
+
+* update ([b181eef](https://github.com/d0whc3r/spec-kit-axi/commit/b181eef4e4bc195f017c0f76b6357df23f56f510))
+
 ## [1.1.3](https://github.com/d0whc3r/spec-kit-axi/compare/v1.1.2...v1.1.3) (2026-06-29)
 
 

@@ -6,15 +6,16 @@ edit and want to keep voice and shape consistent across the wiki.
 
 ## 1. New command added
 
-A new file `commands/speckit.improve.<verb>.md` exists. The canonical
+A new file `commands/speckit.axi.<verb>.md` exists. The canonical
 side (`extension.yml`, `catalog.json`, the integration manifests) is owned
 by the release pipeline and contributors; this skill does not touch it.
 The user-facing side to update:
 
 - `README.md` and `docs/Home.md` command table (one new row).
 - `docs/Commands.md` (one new section).
-- `docs/Workflow.md` (mention in the recommended order if relevant).
-- `docs/Troubleshooting.md` (a refusal row if the command can refuse).
+- `docs/Workflow.md` (mention in the flow if relevant).
+- `docs/Troubleshooting.md` (a section if the command can fail in a new
+  way).
 - `docs/Architecture.md` (add to the runtime flow if relevant).
 - `docs/_Sidebar.md` (no change unless a new top-level page was added).
 - `web/index.html` (one new command card or table row).
@@ -22,64 +23,70 @@ The user-facing side to update:
 ### Before (excerpt of `docs/Home.md`)
 
 ```markdown
-| Command             | What it does                                              | Writes                      |
-| ------------------- | --------------------------------------------------------- | --------------------------- |
-| `/speckit.improve`  | Full audit, or one prompt for a specific change you name. | `specs/<spec>/improve/*.md` |
+| Command               | What it does                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `/speckit.axi.review` | Open a feature's markdown in a browser review surface, collect annotations, and apply the notes. |
 ```
 
 ### After
 
 ```markdown
-| Command                   | What it does                                              | Writes                        |
-| ------------------------- | --------------------------------------------------------- | ----------------------------- |
-| `/speckit.improve`        | Full audit, or one prompt for a specific change you name. | `specs/<spec>/improve/*.md`   |
-| `/speckit.improve.triage` | Re-rank an existing backlog without a fresh audit.        | prompt frontmatter (priority) |
+| Command               | What it does                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `/speckit.axi.review` | Open a feature's markdown in a browser review surface, collect annotations, and apply the notes. |
+| `/speckit.axi.diff`   | Show what changed in a feature's markdown since the last review.                                 |
 ```
 
 Then add a section body to `docs/Commands.md` modeled on the existing
-per-command sections. Always include: a one-paragraph summary,
-**Reads** / **Writes** lines, the output section list, and any refusal
+per-command section. Always include: a one-paragraph summary,
+**Reads** / **Writes** lines, the behavior walkthrough, and any error
 conditions the command defines.
 
 ## 2. Version bump
 
 `extension.yml.extension.version` and `catalog.json.version` were bumped
-by the release pipeline. The version appears in three user-facing places,
-each with a pinned install URL:
+by the release pipeline. The pinned install URL appears in four
+user-facing places, and the bare version in two more on the website:
 
 - `README.md` install snippet.
-- `docs/Getting-Started.md` "pin a specific version" snippet.
-- `web/index.html` install snippet and the "Requires Spec Kit" badge area.
+- `docs/Getting-Started.md` install snippet.
+- `docs/Troubleshooting.md` direct-install snippet.
+- `docs/FAQ.md` direct-install snippet.
+- `web/index.html` install snippets, the header version badge, and the
+  JSON-LD `softwareVersion`.
 
-Each URL contains the literal version twice (in the path and in the zip
-filename). Update both occurrences in each file.
+Each install URL contains the literal version twice (in the path and in
+the zip filename). Update both occurrences in each file. Run
+`scripts/detect_drift.sh` after the edits; it checks every pinned URL
+and the JSON-LD version against `extension.yml`.
 
 ### Before
 
 ```bash
-specify extension add improve --from https://github.com/d0whc3r/spec-kit-improve/releases/download/v0.1.0/improve-0.1.0.zip
+specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.3/axi-1.1.3.zip
 ```
 
 ### After
 
 ```bash
-specify extension add improve --from https://github.com/d0whc3r/spec-kit-improve/releases/download/v0.1.1/improve-0.1.1.zip
+specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
 ```
 
-Do not touch the catalog install path; it does not pin a version.
+Do not touch the community catalog install path; it does not pin a
+version.
 
 ## 3. Renamed file
 
 `AGENTS.md` treats command renames as breaking changes. The doc side of a
 rename is straightforward but must be done in lockstep.
 
-If `commands/speckit.improve.<old-verb>.md` is renamed to
-`commands/speckit.improve.<new-verb>.md`:
+If `commands/speckit.axi.<old-verb>.md` is renamed to
+`commands/speckit.axi.<new-verb>.md`:
 
 - Rename the section header in `docs/Commands.md`.
 - Update the in-page anchor link in the table.
-- Update every mention of `/speckit.improve.<old-verb>` to
-  `/speckit.improve.<new-verb>` in `README.md`, `docs/Home.md`,
+- Update every mention of `/speckit.axi.<old-verb>` to
+  `/speckit.axi.<new-verb>` in `README.md`, `docs/Home.md`,
   `docs/Getting-Started.md`, `docs/Workflow.md`, `docs/Examples.md`,
   `docs/Architecture.md`, `WORKFLOW.md`, `web/index.html`,
   `CHANGELOG.md` (the new entry).
@@ -88,7 +95,7 @@ When in doubt, do a project-wide search for the old name before
 finishing (substitute the real verb):
 
 ```bash
-git grep -l 'speckit.improve.<old-verb>\b' -- '*.md' ':!CHANGELOG.md'
+git grep -l 'speckit.axi.<old-verb>\b' -- '*.md' ':!CHANGELOG.md'
 ```
 
 If any file still references the old name after your edits, you missed
@@ -96,7 +103,7 @@ one.
 
 ## 4. New wiki page
 
-The user added `docs/Examples-Advanced.md` (for example) or you are
+The user added `docs/Keyboard-Shortcuts.md` (for example) or you are
 adding it as part of a sync. Touch these:
 
 - `docs/_Sidebar.md` (add a bullet in the correct reading position).
@@ -118,12 +125,13 @@ A short sentence describing the extension exists in several places:
 - `catalog.json.description` (canonical, the release pipeline owns it).
 - `README.md` opening paragraph.
 - `docs/Home.md` opening paragraph.
+- `web/index.html` hero lede, meta description, and footer tagline.
 
-The README and Home page paragraphs are derived; they may expand on the
-manifest description with one or two extra sentences but the lead line
-should not contradict the manifest. When the manifest description
-changes, rewrite the lead sentence in `README.md` and `docs/Home.md` to
-match.
+The README, Home, and website paragraphs are derived; they may expand on
+the manifest description with one or two extra sentences but the lead
+line should not contradict the manifest. When the manifest description
+changes, rewrite the lead sentence in `README.md`, `docs/Home.md`, and
+the website meta description to match.
 
 ## 6. Em dash creep
 
@@ -137,19 +145,19 @@ dash (`—`) usually wants one of:
 ### Before
 
 ```
-The audit spans nine categories — correctness, security, performance — and more.
+The queue carries every note — annotations and comments — in one TOON table.
 ```
 
 ### After
 
 ```
-The audit spans nine categories (correctness, security, performance) and more.
+The queue carries every note (annotations and comments) in one TOON table.
 ```
 
 or
 
 ```
-The audit spans nine categories. They include correctness, security, and performance.
+The queue carries every note in one TOON table. It holds both annotations and comments.
 ```
 
 Pick the form that reads cleanest in context.
@@ -163,23 +171,24 @@ updating the link target, not the link text.
 ## 8. Long-form vs short-form workflow doc
 
 `WORKFLOW.md` (root) and `docs/Workflow.md` are a long/short pair, both
-written for the user running the commands. When they drift:
+written for the user running the command. When they drift:
 
 - Update `docs/Workflow.md` first (it is the wiki entry point).
 - Mirror the structural changes in `WORKFLOW.md` while keeping its
   fuller narrative. Do not collapse `WORKFLOW.md` into
   `docs/Workflow.md`; the long form has room for more context.
 
-If a fact appears in both files (a filename, a command name, a status
-value), make sure they match byte-for-byte.
+If a fact appears in both files (a subcommand name, a flag, a path),
+make sure they match byte-for-byte.
 
 ## 9. Removing out-of-scope content
 
 A user-facing page has drifted into contributor or tooling territory: it
 describes the release pipeline, a CI workflow, the dev install
-(`specify extension add --dev`), the repo source tree, or repo
-governance. This content is correct but misplaced; it belongs in
-`CONTRIBUTING.md`, and on a user page it is noise that rots unread.
+(`specify extension add --dev`), the esbuild bundle of the review
+runtime, the repo source tree, or repo governance. This content is
+correct but misplaced; it belongs in `CONTRIBUTING.md`, and on a user
+page it is noise that rots unread.
 
 The fix is to cut it. If a reader might genuinely need the contributor
 information, leave a single pointer rather than the content itself.
@@ -189,7 +198,7 @@ information, leave a single pointer rather than the content itself.
 ```markdown
 Shipped content uses plain English and no em dashes.
 `.github/scripts/lint-content.mjs` in the release pipeline enforces this
-on the templates.
+on the command file.
 ```
 
 ### After
@@ -207,7 +216,7 @@ See [Contributing](Contributing.md) for the full release coupling.
 ### After
 
 ```markdown
-Contributors: see [CONTRIBUTING.md](https://github.com/d0whc3r/spec-kit-improve/blob/main/CONTRIBUTING.md).
+Contributors: see [CONTRIBUTING.md](https://github.com/d0whc3r/spec-kit-axi/blob/main/CONTRIBUTING.md).
 ```
 
 Do not leave a dangling link to a wiki `Contributing` page; that page is

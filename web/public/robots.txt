@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://d0whc3r.github.io/spec-kit-axi/sitemap.xml

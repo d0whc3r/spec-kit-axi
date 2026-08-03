@@ -21,7 +21,7 @@ hand; `scripts/detect_drift.sh` reports broken local links.
    command names are fine.
 4. **Markdown links to local pages use `Page-Name.md`.** The same link
    must work on the rendered repo and on GitHub Wiki. Anchor links
-   inside a page use lowercase, no punctuation: `#speckitimproveaudit`.
+   inside a page use lowercase, no punctuation: `#speckitaxireview`.
 
 ## Voice rules (apply by hand)
 
@@ -32,8 +32,8 @@ hand; `scripts/detect_drift.sh` reports broken local links.
    extension does.
 3. **Active voice over passive.** "The command writes the prompt file",
    not "the prompt file is written by the command".
-4. **Imperative for instructions.** "Run `/speckit.improve`",
-   not "You should run `/speckit.improve`".
+4. **Imperative for instructions.** "Run `/speckit.axi.review`",
+   not "You should run `/speckit.axi.review`".
 5. **Concrete over abstract.** Use real paths, real filenames, real
    command outputs. Avoid placeholder phrasing like "the appropriate
    file".
@@ -48,27 +48,27 @@ hand; `scripts/detect_drift.sh` reports broken local links.
 
 ## Conventions specific to this project
 
-1. **Refer to commands with the leading slash.** `/speckit.improve`,
-   not `speckit.improve` or `improve`. The slash makes the
+1. **Refer to commands with the leading slash.** `/speckit.axi.review`,
+   not `speckit.axi.review` or `axi`. The slash makes the
    command shape clear and matches how a user invokes it.
-2. **Refer to output by its real path and descriptive name.** Spec
-   prompts live at `specs/<spec>/improve/<NNN>-<plan-name>.md` with a
-   descriptive name behind a zero-padded execution-order prefix
-   (`001-fix-n-plus-one.md`, `002-add-csrf-protection.md`). A folder with a
-   single prompt omits the prefix; the number renders the `depends` order and
-   is reassigned on each re-run.
-3. **Always distinguish `spec.md` (canonical, written by
-   `/speckit.specify` in `specs/<feature>/`) from the improve prompt
-   files (the advisor's input that feeds the lifecycle).** Be explicit
-   when both appear in the same paragraph.
-4. **`[NEEDS CLARIFICATION]` markers are preserved literally.** They
-   are uppercase, bracketed, and must round-trip through the wiki when
-   shown in examples. Never silently resolve one.
+2. **Refer to the review server by its installed path.**
+   `.specify/extensions/axi/templates/web-review/axi-server.mjs`. In
+   prose, "the review server" or "the server" is fine after the first
+   mention. Never shorten the path to `templates/...` without the
+   `.specify/extensions/axi/` prefix; that prefix is why the command
+   must run from the project root.
+3. **Name the two note kinds precisely.** An annotation (`anno`) is
+   anchored to selected text; a comment (`chat`) is a general remark.
+   The queue the reviewer sends is TOON. Keep those terms in backticks
+   or capitalized as shown.
+4. **Call `.speckit-axi/` local working state.** It holds the session
+   and the queue, it never leaves the machine, and it is not something
+   the user commits.
 5. **Use the phrase "host AI agent" or "host agent"** when referring
    to Claude Code, Copilot, Codex, or any Spec Kit-aware assistant
    running the command prompt. Avoid "AI", "LLM", or "the model" in
-   prose.
-6. **Use the phrase "the extension"** for the Improve extension itself.
+   prose. The person in the browser is "the reviewer".
+6. **Use the phrase "the extension"** for the Axi extension itself.
    Avoid "the plugin", "the product", or "this tool".
 7. **Capitalize Spec Kit as two words.** Lowercase `specify` only when
    it is literally the CLI binary name (in code blocks).
@@ -81,12 +81,12 @@ hand; `scripts/detect_drift.sh` reports broken local links.
 1. **Pad cells.** The repo's existing tables are padded so the columns
    align in plain text. Mimic the existing padding when adding rows;
    do not realign the whole table.
-2. **Header column order is fixed.** The "Command / What it does /
-   Writes" table appears in `README.md` and `docs/Home.md`. The columns
-   are always in that order.
+2. **Header column order is fixed.** The "Command / What it does" table
+   appears in `README.md` and `docs/Home.md`. The columns are always in
+   that order.
 3. **Anchor links from the table use the section header form** with
-   punctuation stripped: `/speckit.improve` →
-   `#speckitimprove`.
+   punctuation stripped: `/speckit.axi.review` →
+   `#speckitaxireview`.
 
 ## Headings
 

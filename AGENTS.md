@@ -78,10 +78,15 @@ shell commands, and other important information, read the current plan
 
 ## Agent Boundaries
 
-This repository ships the **axi** extension for Spec Kit. **TODO: describe the
-extension's purpose.** It exposes a single command, `/speckit.axi.review`. The content
-(command, templates, docs) is placeholder until the scope is defined; the
-build, lint, release, and docs infrastructure is already in place.
+This repository ships the **axi** extension for Spec Kit. Axi renders a
+feature's markdown artifacts in a local browser review surface so a human can
+annotate the exact text and chat comments; the queued notes go back to the
+agent, which edits the canonical `.md` files while the browser live-reloads.
+It exposes a single command, `/speckit.axi.review`, plus the review runtime
+under `templates/web-review/` (built from `web-review/src/`). The user-facing
+docs live under `docs/` (synced to the GitHub Wiki) and `web/` (the GitHub
+Pages landing site); the `maintain-docs` skill keeps both in sync with the
+canonical sources.
 
 | Agent         | Skill Surface                                | Notes                                                                                  |
 | ------------- | -------------------------------------------- | -------------------------------------------------------------------------------------- |

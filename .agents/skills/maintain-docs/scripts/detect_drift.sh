@@ -24,6 +24,10 @@ ver_ext=$(grep -E '^[[:space:]]*version:' extension.yml | head -1 \
 ver_cat=$(grep -E '"version"' catalog.json | head -1 \
             | sed -E 's/.*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')
 
+ext_id=$(grep -E '^[[:space:]]*id:' extension.yml | head -1 \
+           | sed -E 's/.*id:[[:space:]]*"?([^"#]+)"?.*/\1/' \
+           | tr -d ' ')
+
 cmd_files=(commands/speckit.*.md)
 cmd_count_files=${#cmd_files[@]}
 
@@ -46,19 +50,28 @@ else
   ok "extension.yml and catalog.json agree on version $ver_ext"
 fi
 
-# install URL pins in README, Getting-Started, and the web landing page
-# should match version
-for f in README.md docs/Getting-Started.md web/index.html; do
-  if [[ -f "$f" ]]; then
-    if grep -qE "releases/download/v[0-9]+\.[0-9]+\.[0-9]+/improve-[0-9]+\.[0-9]+\.[0-9]+\.zip" "$f"; then
-      pinned=$(grep -oE "releases/download/v[0-9]+\.[0-9]+\.[0-9]+" "$f" \
-                 | head -1 | sed 's|releases/download/v||')
-      if [[ "$pinned" != "$ver_ext" ]]; then
-        note "$f pins version v$pinned but extension.yml is $ver_ext"
-      else
-        ok "$f install URL pins matching version $pinned"
-      fi
+# Every pinned install URL in the user-facing layer must match the
+# version. The zip name is "<id>-<version>.zip" (for example
+# axi-1.1.3.zip), derived from extension.yml so the check works for any
+# extension id. The pinned URL appears in several pages (README,
+# Getting-Started, Troubleshooting, FAQ, the website), so scan them all.
+for f in README.md docs/*.md web/index.html; do
+  [[ -f "$f" ]] || continue
+  while IFS= read -r pinned; do
+    [[ -z "$pinned" ]] && continue
+    if [[ "$pinned" != "$ver_ext" ]]; then
+      note "$f pins version v$pinned but extension.yml is $ver_ext"
     fi
+  done < <(grep -oE "releases/download/v[0-9]+\.[0-9]+\.[0-9]+/${ext_id}-[0-9]+\.[0-9]+\.[0-9]+\.zip" "$f" \
+             | sed -E 's|releases/download/v([0-9]+\.[0-9]+\.[0-9]+)/.*|\1|' \
+             | sort -u)
+done
+ok "install URL pins checked against version $ver_ext"
+
+# These three pages must carry a pinned install URL.
+for f in README.md docs/Getting-Started.md web/index.html; do
+  if [[ -f "$f" ]] && ! grep -qE "releases/download/v[0-9]+\.[0-9]+\.[0-9]+/${ext_id}-[0-9]+\.[0-9]+\.[0-9]+\.zip" "$f"; then
+    note "$f has no pinned install URL"
   fi
 done
 
@@ -70,6 +83,17 @@ if [[ -f CHANGELOG.md ]]; then
     note "CHANGELOG.md top entry is $top_changelog but extension.yml is $ver_ext"
   elif [[ -n "$top_changelog" ]]; then
     ok "CHANGELOG.md top entry matches version $ver_ext"
+  fi
+fi
+
+# softwareVersion in the website JSON-LD
+if [[ -f web/index.html ]]; then
+  ld_ver=$(grep -oE '"softwareVersion":[[:space:]]*"[0-9]+\.[0-9]+\.[0-9]+"' web/index.html \
+             | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+  if [[ -n "$ld_ver" ]] && [[ "$ld_ver" != "$ver_ext" ]]; then
+    note "web/index.html JSON-LD softwareVersion is $ld_ver but extension.yml is $ver_ext"
+  elif [[ -n "$ld_ver" ]]; then
+    ok "web/index.html JSON-LD softwareVersion matches version $ld_ver"
   fi
 fi
 
@@ -114,7 +138,7 @@ ok "manifest presence check done"
 
 if [[ -f docs/Commands.md ]]; then
   for name in "${cmd_names[@]}"; do
-    # name is like "speckit.improve"; docs use /speckit.improve
+    # name is like "speckit.axi.review"; docs use /speckit.axi.review
     if ! grep -q "/$name\b" docs/Commands.md; then
       note "docs/Commands.md missing reference to /$name"
     fi
@@ -219,6 +243,25 @@ if [[ -f web/index.html ]]; then
   done
   ok "web/index.html command coverage checked"
 fi
+
+# ---- 9. review server path ------------------------------------------
+#
+# The canonical runtime path is templates/web-review/axi-server.mjs
+# (installed at .specify/extensions/axi/templates/web-review/axi-server.mjs).
+# Every mention of axi-server.mjs in the user-facing layer must use that
+# path; anything else (for example a stale templates/axi-web/ reference)
+# is drift.
+
+for f in docs/*.md README.md WORKFLOW.md web/index.html; do
+  [[ -f "$f" ]] || continue
+  while IFS= read -r p; do
+    case "$p" in
+      *templates/web-review/axi-server.mjs) ;;
+      *) note "$f references axi-server.mjs at a stale path: $p" ;;
+    esac
+  done < <(grep -oE '[A-Za-z0-9_./-]*axi-server\.mjs' "$f" || true)
+done
+ok "axi-server.mjs path check done"
 
 # ---- summary -------------------------------------------------------
 

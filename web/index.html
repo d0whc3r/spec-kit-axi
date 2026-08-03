@@ -15,8 +15,112 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://d0whc3r.github.io/spec-kit-axi/" />
+    <meta property="og:site_name" content="Axi Extension" />
+    <meta property="og:image" content="https://d0whc3r.github.io/spec-kit-axi/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Axi Extension for Spec Kit: review your spec in the browser and hand the agent precise notes."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Axi Extension for Spec Kit" />
+    <meta
+      name="twitter:description"
+      content="Review a feature's spec-kit markdown in the browser, annotate the exact text, and let the agent apply your notes while the page live-reloads."
+    />
+    <meta name="twitter:image" content="https://d0whc3r.github.io/spec-kit-axi/og-image.png" />
+    <link rel="canonical" href="https://d0whc3r.github.io/spec-kit-axi/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/src/styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Axi Extension for Spec Kit",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "url": "https://d0whc3r.github.io/spec-kit-axi/",
+        "downloadUrl": "https://github.com/d0whc3r/spec-kit-axi/releases",
+        "softwareVersion": "1.1.3",
+        "description": "A Spec Kit extension that renders a feature's markdown in a local browser review surface for human annotation, then returns the queued notes to the agent to apply.",
+        "license": "https://github.com/d0whc3r/spec-kit-axi/blob/main/LICENSE",
+        "author": {
+          "@type": "Person",
+          "name": "d0whc3r",
+          "url": "https://github.com/d0whc3r"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why does specify extension add axi fail?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The extension lives in Spec Kit's community catalog, which is discovery only and carries install_allowed: false. The CLI can list it but will not install until you opt in. Either install directly with --from <release-zip-url>, or approve the community catalog once."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Will it change my files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, but only the feature's markdown you are reviewing, and only as your queued notes direct. The agent edits the canonical .md files in place and the page live-reloads. It does not write a derived copy, and your notes stay on your machine."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need an internet connection?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, to render the pages. The renderer (marked, DOMPurify, and mermaid) loads from a pinned CDN, so a plain visit needs internet; offline, the surface shows a notice. The markdown and your notes never leave your machine."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which files does it open?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every .md file in the feature directory, including nested ones such as contracts/. Known names (spec.md, plan.md, tasks.md, constitution.md, and a few others) sort first; the rest follow alphabetically."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does the extension run by itself?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The command is a Markdown prompt that needs a Spec Kit-aware assistant to resolve and execute it. The review surface is a zero-dependency Node tool the assistant launches with node; it binds only to 127.0.0.1 and has no runtime of its own beyond Node."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I end a session?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "End it from the browser, or ask the agent to stop. The agent shuts the local server down. Starting another review reopens the surface for whatever feature you point it at."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I update the extension?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "If you approved the community catalog, run specify extension update axi. Otherwise rerun the direct install with the newer release URL. Your specs/ tree is not touched."
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -212,9 +316,9 @@ specify extension add axi</code></pre>
 
           <p class="note">
             Under the hood, <code>/speckit.axi.review</code> drives a small zero-dependency Node
-            tool, <code>templates/axi-web/axi-server.mjs</code>, that binds only to
-            <code>127.0.0.1</code>. The agent uses these subcommands to bridge your browser and the
-            markdown:
+            tool, <code>.specify/extensions/axi/templates/web-review/axi-server.mjs</code>, that
+            binds only to <code>127.0.0.1</code>. The agent uses these subcommands to bridge your
+            browser and the markdown:
           </p>
 
           <div class="table-wrap">

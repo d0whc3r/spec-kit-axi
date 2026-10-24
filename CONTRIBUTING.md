@@ -7,8 +7,8 @@ Thanks for considering a contribution. This repository hosts a single Spec Kit e
 The repo root IS the extension root, per the canonical Spec Kit extension layout. The release pipeline packages only the extension's runtime surface into the zip (`extension.yml`, `README.md`, `LICENSE`, `commands/**`, `templates/**`; see the `INCLUDE` list in `.github/scripts/build-zip.mjs`).
 
 - `extension.yml`, `README.md`, `LICENSE`, `CHANGELOG.md` at the repo root.
-- `commands/` holds the canonical command prompt; `templates/` holds the references it reads (audit playbook, spec prompt template, closing-the-loop).
-- `catalog.json` is the single-entry catalog file. Pipeline-owned fields (`version`, `download_url`, `requires.speckit_version`, `updated_at`, `created_at`) are updated by CI on every release; do not edit them by hand.
+- `commands/` holds the canonical command prompt. `templates/web-review/` holds the review runtime that `pnpm review:build` compiles from `web-review/src/`. The runtime is gitignored build output, and the zip ships it.
+- `catalog.json` is the single-entry catalog file. CI updates the pipeline-owned fields (`version`, `download_url`, `requires`, `updated_at`, `created_at`) on every release. `requires` is copied from `extension.yml`, so edit it there.
 - `.github/workflows/release.yml` is the release pipeline.
 - `.github/scripts/` holds pipeline helpers (`validate-manifest.mjs`, `build-zip.mjs`, `sync-metadata.mjs`, `lint-content.mjs`).
 - `docs/` is the user-facing wiki source; `web/` is the GitHub Pages site.
@@ -18,18 +18,20 @@ The repo root IS the extension root, per the canonical Spec Kit extension layout
 To dogfood the extension on this repo or any other Spec Kit project, run from the cloned repo:
 
 ```bash
+pnpm review:build
 specify extension add --dev "$(pwd)"
 ```
 
-The CLI installs the extension under `.specify/extensions/axi/` of the target project and registers it. Re-run after each manifest change.
+The CLI installs the extension under `.specify/extensions/axi/` of the target project and registers it. `.extensionignore` limits the copy to the files the release zip ships. After each change, re-run the install with `--force` to overwrite the installed copy.
 
 ## Iterating on the Commands
 
 The slash command is a markdown prompt at `commands/speckit.axi.review.md`. Edit it, then dogfood:
 
-1. Run `/speckit.axi.review quick` against a real repository (this one works).
-2. Judge the output against the contract: findings carry `file:line` evidence, the table is leverage-ordered, and every written spec prompt passes the "Quality bar" section of `templates/axi-template.md`.
-3. The strongest signal is processing a generated spec prompt through `/speckit.specify` in a fresh session with zero context. Where the generated spec drops or distorts a requirement, the command prompt or the template needs tightening.
+1. Run `/speckit.axi.review <feature-dir>` against a real feature directory. `web-review/test/fixtures/specs/001-sample` works.
+2. Annotate a phrase and add a chat comment in the browser, then click **Send**.
+3. Check that `poll` prints both notes, the agent edits the quoted text under the right heading, and the `reply` summary shows in the browser.
+4. End the session in the browser. Check that the next `poll` reports the ended session and the agent runs `stop`.
 
 ## Local Pipeline Checks
 
@@ -48,26 +50,26 @@ ls dist/
 
 ## Cutting a Release
 
-Releases are automatic. The `release` workflow at `.github/workflows/release.yml` runs `pnpx semantic-release` on every push to `main`. Conventional Commits drive the next version, changelog, and tag.
+Releases are automatic. The `release` workflow at `.github/workflows/release.yml` runs `pnpm run release` (semantic-release) on every push to `main`. Conventional Commits drive the next version, changelog, and tag.
 
 1. Write commits using [Conventional Commits](https://www.conventionalcommits.org/). Examples:
    - `fix: ...` triggers a patch bump.
    - `feat: ...` triggers a minor bump.
-   - `feat!: ...` or any commit body containing `BREAKING CHANGE:` triggers a major bump.
+   - A `BREAKING CHANGE:` footer in the commit body triggers a major bump. The default angular preset ignores a `feat!:` header.
    - `chore:`, `docs:`, `refactor:`, `test:`, `ci:` do not trigger a release.
 2. Land your work on `main` with CI green. The release workflow fires on push.
 3. `semantic-release` runs the plugin chain in `.releaserc.json`:
    - Determine the next version from commits since the last tag.
    - Generate release notes and prepend them to `CHANGELOG.md`.
-   - Run `.github/scripts/semantic-release-prepare.mjs <version>` to bump `extension.yml`, refresh the direct-install URLs across the docs and website, and update `catalog.json`.
-   - Run `.github/scripts/submit-catalog-update.mjs` to render the `[Extension Submission]` document, uploaded as the `upstream-catalog-issue` artifact for manual filing at `github/spec-kit` (see **Community Catalog Submission** below).
-   - Commit `chore(release): catalog v<version>` as `github-actions[bot]` with `CHANGELOG.md`, `extension.yml`, `catalog.json`, and `README.md`.
+   - Run `.github/scripts/semantic-release-prepare.mjs <version>` to bump `extension.yml` and `package.json`, refresh the direct-install URLs and the website version, build the zip, and update `catalog.json`.
+   - Commit `chore(release): catalog v<version>` as `github-actions[bot]` with the files in the `assets` list of `.releaserc.json`.
    - Create tag `v<version>`, publish a GitHub Release, and attach `dist/axi-<version>.zip`.
-4. If no commits since the last tag qualify, semantic-release exits cleanly and nothing is released. Push another qualifying commit to trigger a release.
-5. To rehearse the version decision locally without publishing:
+4. After a release, the workflow adds install notes to the GitHub Release, publishes the wiki, and runs `.github/scripts/submit-catalog-update.mjs`. That script renders the `[Extension Submission]` document and uploads it as the `upstream-catalog-issue` artifact (see **Community Catalog Submission** below).
+5. If no commits since the last tag qualify, semantic-release exits cleanly and nothing is released. Push another qualifying commit to trigger a release.
+6. To rehearse the version decision locally without publishing:
    ```bash
    pnpm install
-   pnpx semantic-release --dry-run
+   pnpm release:dry
    ```
 
 Re-tagging an already-released version is not supported. Push a qualifying commit so the next patch version is cut.
@@ -139,14 +141,15 @@ Use feature branches named `NNN-short-description` (sequential numbering).
 
 ## Style Rules for Shipped Content
 
-The extension's value is the advisor voice and the processability of its spec prompts. Style rules are enforced by `.github/scripts/lint-content.mjs` on `commands/*.md` and `templates/*.md`:
+Write the shipped command prompt (`commands/speckit.axi.review.md`) in plain English and active voice. `.github/scripts/lint-content.mjs` enforces these rules on it:
 
-1. English only, plain English, active voice.
-2. No em dash character in shipped commands or templates.
-3. Findings always carry `file:line` evidence; spec prompts always carry machine-checkable acceptance criteria with expected results.
-4. The advisor boundary stays intact: no command may instruct an agent to edit source code; the only writes go under `specs/<spec-name>/axi/`.
+1. No em dash character.
+2. No banned AI-tell phrases (the `BANNED_PHRASES` list in the script).
+3. The file passes `oxfmt --check`.
 
-If you change these rules, update the templates, the command prompts, and the lint script in the same commit.
+Write every Spec Kit command name in the prompt as a token, for example `__SPECKIT_COMMAND_AXI_REVIEW__` or `__SPECKIT_COMMAND_PLAN__`. Spec Kit replaces it at install time with the agent's form (`/speckit.axi.review` or `/speckit-axi-review`). Check the installed file after `specify extension add --dev`.
+
+The command edits only the feature's markdown, and only as the reviewer's notes direct. Keep that boundary when you change the prompt. If you change these rules, update the command prompt and the lint script in the same commit.
 
 ## Reporting Issues
 

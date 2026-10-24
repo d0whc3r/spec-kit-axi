@@ -1,8 +1,6 @@
 # Commands Reference
 
-One slash command. It opens a feature's markdown for review in the browser,
-collects the reviewer's notes, and applies them to the canonical files. It does
-not generate a new file; it edits the feature's existing markdown in place.
+One slash command, `/speckit.axi.review` (`/speckit-axi-review` in skills-based agents such as Claude Code), and two optional hooks. The command opens a feature's markdown for review in the browser, collects the reviewer's notes, and applies them to the canonical files. It does not generate a new file; it edits the feature's existing markdown in place.
 
 | Command                                    | Reads                                | Writes                                           | Audience                |
 | ------------------------------------------ | ------------------------------------ | ------------------------------------------------ | ----------------------- |
@@ -11,6 +9,8 @@ not generate a new file; it edits the feature's existing markdown in place.
 `/speckit.axi.review` accepts an optional feature directory as its argument
 (`/speckit.axi.review specs/001-my-feature`). Without one, the agent resolves the
 feature itself (see [Feature resolution](#feature-resolution)).
+
+Skills-based agents show the command under another name: `/speckit-axi-review` in Claude Code, `$speckit-axi-review` in Codex.
 
 ---
 
@@ -32,10 +32,12 @@ queued notes direct. No derived copy is ever written.
 When you do not name a directory, the agent resolves it in this order:
 
 1. If you named a path, use it.
-2. Else the `specs/` subdirectory that matches the current git branch.
-3. Else, if there is exactly one `specs/*` directory, use it.
-4. Else the most recently modified `specs/*` directory.
-5. If it is still unclear, ask you.
+2. Else the `SPECIFY_FEATURE_DIRECTORY` environment variable, if set.
+3. Else the `feature_directory` in `.specify/feature.json`. Spec Kit core writes this file when it creates or selects a feature.
+4. Else the `specs/` subdirectory that matches the current git branch.
+5. Else, if there is exactly one `specs/*` directory, use it.
+6. Else the most recently modified `specs/*` directory.
+7. If it is still unclear, ask you.
 
 ### What a run looks like
 
@@ -48,6 +50,19 @@ When you do not name a directory, the agent resolves it in this order:
 
 See [Workflow](Workflow.md) for the full loop and [Annotation
 Format](Annotation-Format.md) for the shape of the queue.
+
+---
+
+## Hooks
+
+The extension registers two optional hooks. When the core command finishes, Spec Kit shows the hook's prompt, and you choose whether to run the review.
+
+| Hook            | Runs after         | Prompt                                                                   |
+| --------------- | ------------------ | ------------------------------------------------------------------------ |
+| `after_specify` | `/speckit.specify` | Open spec.md in the browser review surface?                              |
+| `after_plan`    | `/speckit.plan`    | Open plan.md and the other plan artifacts in the browser review surface? |
+
+Both hooks run `/speckit.axi.review` with no argument, so the agent reviews the feature that Spec Kit marks as active. To turn a hook off, set `enabled: false` on its entry in `.specify/extensions.yml`.
 
 ---
 

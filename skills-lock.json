@@ -11,7 +11,7 @@
       "source": "kunchenguid/axi",
       "sourceType": "github",
       "skillPath": ".agents/skills/axi/SKILL.md",
-      "computedHash": "e3993d4b3be5c816b83a0957951906d3223dd4e6df2f19869eef6607170b6838"
+      "computedHash": "b4294fa06402d65a8fce0528bd4bca9286d19fbcd9882717d0ebe8821c24a563"
     },
     "skill-creator": {
       "source": "anthropics/skills",

@@ -8,7 +8,7 @@ The reverse direction (canonical file → which pages depend on it) is at
 the bottom.
 
 Only user-facing pages appear here. Contributor and tooling docs
-(`CONTRIBUTING.md`, `AGENTS.md`/`CLAUDE.md`) are out of this skill's
+(`CONTRIBUTING.md`, `AGENTS.md`) are out of this skill's
 scope and are intentionally absent.
 
 ## Wiki pages
@@ -46,8 +46,7 @@ Asserts:
 - The prerequisites: Node.js on `PATH`, a browser, and an internet
   connection for the CDN-loaded renderer.
 
-Scope rule: this page covers the user install paths (direct install from
-the release URL and the approved community catalog). It does not cover
+Scope rule: this page covers the user install path (install and `--force` update from the release URL, and discovery with `specify extension search` and `specify extension info`). It does not cover
 the dev install (`specify extension add --dev`); that is a contributor
 step and lives in `CONTRIBUTING.md`.
 
@@ -132,8 +131,8 @@ fixes.
 
 Asserts:
 
-- The installation-errors section (the community catalog
-  `install_allowed: false` case), matching the install paths in
+- The installation-errors section (the discovery-only community catalog
+  error), matching the install path in
   `README.md`, with a pinned install URL that matches the current
   version.
 - Each CLI error message the review server can print, with the same
@@ -270,14 +269,14 @@ Asserts:
 - The version: the header version badge, the pinned install snippets,
   and the JSON-LD `softwareVersion` (all must match
   `extension.yml.extension.version`).
-- The hero badges: command count, `Requires Spec Kit >= 0.2.0`, license.
+- The hero badges: command count, `Requires Spec Kit >= 0.12.17`, license.
 - The command (same command name and what it does as
   `docs/Home.md`; HTML form, not byte-equivalent).
 - The review server path
   (`.specify/extensions/axi/templates/web-review/axi-server.mjs`) and the
   subcommand table (matching `docs/Commands.md`).
-- The install-help section (the community catalog error and both opt-in
-  paths, matching `docs/Troubleshooting.md`).
+- The install-help section (the discovery-only catalog error, the release
+  install, and the `--force` update, matching `docs/Troubleshooting.md`).
 - The FAQ entries (a subset of `docs/FAQ.md`; must not contradict it).
 - The repository, wiki, issues, and discussions links.
 
@@ -296,7 +295,7 @@ echoes.
   pipeline checks, release procedure, catalog submission, style coupling,
   branch naming. User-facing pages link here for contributor questions;
   the skill does not edit it.
-- `AGENTS.md` / `CLAUDE.md` — agent behavioral guidelines and repo
+- `AGENTS.md` — agent behavioral guidelines and repo
   governance, not user docs.
 - `SECURITY.md`, `SUPPORT.md`, `CODE_OF_CONDUCT.md` — standard repo
   files. Leave alone unless explicitly asked.

@@ -1,4 +1,4 @@
-# markdownlint config tuned for the Improve extension.
+# markdownlint config for the Axi extension docs.
 # See https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
 default: true
 

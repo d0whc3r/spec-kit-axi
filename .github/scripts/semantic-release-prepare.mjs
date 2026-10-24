@@ -2,7 +2,8 @@
 // preparation by combining the specialized modules:
 //   1. bump extension.yml + package.json versions
 //   2. sync identity fields from package.json into the manifests
-//   3. bump the pinned release URL across docs + website, and the header badge
+//   3. bump the pinned release URL across docs + website, the header badge,
+//      and the JSON-LD softwareVersion
 //   4. build the deterministic zip
 //   5. update catalog.json
 //
@@ -32,6 +33,8 @@ const PINNED_URL_FILES = [
 ];
 // Website header badge: <span class="brand-version">vX.Y.Z</span>
 const BADGE = /(<span class="brand-version">v)\d+\.\d+\.\d+(<\/span>)/g;
+// Website JSON-LD: "softwareVersion": "X.Y.Z"
+const LD_VERSION = /("softwareVersion":\s*")\d+\.\d+\.\d+(")/g;
 
 export async function prepare(version) {
   if (!version) log.die("version argument required");
@@ -63,15 +66,21 @@ export async function prepare(version) {
     }
   }
 
-  // website header version badge
+  // website header version badge and JSON-LD softwareVersion
   const indexPath = fromRoot("web/index.html");
-  const index = fs.readFileSync(indexPath, "utf8");
-  if (index.match(BADGE)) {
-    fs.writeFileSync(indexPath, index.replace(BADGE, `$1${version}$2`));
-    log.ok(`web/index.html header badge -> v${version}`);
-  } else {
-    log.warn("web/index.html no header version badge found, skipped");
+  let index = fs.readFileSync(indexPath, "utf8");
+  for (const [re, label] of [
+    [BADGE, "header badge"],
+    [LD_VERSION, "JSON-LD softwareVersion"],
+  ]) {
+    if (index.match(re)) {
+      index = index.replace(re, `$1${version}$2`);
+      log.ok(`web/index.html ${label} -> ${version}`);
+    } else {
+      log.warn(`web/index.html no ${label} found, skipped`);
+    }
   }
+  fs.writeFileSync(indexPath, index);
 
   // keep the version-bumped package.json formatted alongside the rest
   await format(PATHS.pkg);

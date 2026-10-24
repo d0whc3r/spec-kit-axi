@@ -72,8 +72,7 @@ specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/release
 specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
 ```
 
-Do not touch the community catalog install path; it does not pin a
-version.
+Do not touch the `--force` update snippets that use `<newer-release-zip-url>`; they do not pin a version.
 
 ## 3. Renamed file
 

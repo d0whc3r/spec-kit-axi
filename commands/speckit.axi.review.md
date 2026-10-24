@@ -4,7 +4,7 @@ description: "Open a feature's spec-kit markdown in a browser review surface, co
 
 # Axi
 
-`/speckit.axi.review` opens a human-friendly review surface for the active feature's
+`__SPECKIT_COMMAND_AXI_REVIEW__` opens a human-friendly review surface for the active feature's
 markdown artifacts. The reviewer reads the rendered documents, selects text to
 annotate, and chats comments. You (the agent) receive the queued feedback and
 edit the canonical `.md` files, while the browser live-reloads so the reviewer
@@ -36,10 +36,14 @@ Pick the directory that holds the feature's markdown (`spec.md`, `plan.md`, and
 whatever else was generated):
 
 1. If the user named a path, use it.
-2. Else use the `specs/` subdirectory that matches the current git branch.
-3. Else, if there is exactly one `specs/*` directory, use it.
-4. Else use the most recently modified `specs/*` directory.
-5. If it is still unclear, ask the user.
+2. Else, if the `SPECIFY_FEATURE_DIRECTORY` environment variable is set, use it.
+3. Else, if `.specify/feature.json` exists, use its `feature_directory` value. Spec Kit core writes this file when it creates or selects a feature.
+4. Else use the `specs/` subdirectory that matches the current git branch.
+5. Else, if there is exactly one `specs/*` directory, use it.
+6. Else use the most recently modified `specs/*` directory.
+7. If it is still unclear, ask the user.
+
+Resolve a relative path from the project root.
 
 ### 2. Launch the review surface
 
@@ -54,7 +58,7 @@ send notes.
 Repeat until the session ends:
 
 1. Run `node .specify/extensions/axi/templates/web-review/axi-server.mjs poll <feature-dir>`.
-   It blocks until the reviewer clicks Send, then prints the queued notes as TOON.
+   It blocks until the reviewer clicks Send, then prints the queued notes as TOON. The wait can be long, so give the call the longest timeout your shell tool allows. If the call times out or your tool stops it, run `poll` again. Sent notes wait on the server until a `poll` collects them.
 2. If the output says the reviewer ended the session, leave the loop.
 3. Otherwise apply each note to the canonical markdown:
    - `anno`: open `file`, find the verbatim `quote` under `heading` (use

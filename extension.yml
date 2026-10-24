@@ -9,9 +9,15 @@ extension:
   repository: https://github.com/d0whc3r/spec-kit-axi
   homepage: https://d0whc3r.github.io/spec-kit-axi/
   license: MIT
+  category: docs
+  effect: read-write
 
 requires:
-  speckit_version: ">=0.2.0"
+  speckit_version: ">=0.12.17"
+  tools:
+    - name: node
+      version: ">=22.0.0"
+      required: true
 
 provides:
   commands:
@@ -19,7 +25,22 @@ provides:
       file: commands/speckit.axi.review.md
       description: "Open a feature's markdown in a browser review surface, collect annotations, and apply the queued feedback."
 
+hooks:
+  after_specify:
+    command: speckit.axi.review
+    optional: true
+    prompt: "Open spec.md in the browser review surface?"
+    description: "Open the feature's markdown, spec.md first, in the browser review surface, then apply the reviewer's notes"
+  after_plan:
+    command: speckit.axi.review
+    optional: true
+    prompt: "Open plan.md and the other plan artifacts in the browser review surface?"
+    description: "Open plan.md, research.md, data-model.md, and the rest of the feature's markdown in the browser review surface, then apply the reviewer's notes"
+
 tags:
+  - annotation
   - axi
-  - spec-kit
-  - spec-kit-extension
+  - browser
+  - human-in-the-loop
+  - markdown
+  - review

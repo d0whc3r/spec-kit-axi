@@ -1,73 +1,62 @@
 # AGENTS.md
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+This repo is the `axi` extension for [Spec Kit](https://github.com/github/spec-kit). It ships one command, `speckit.axi.review`, and two optional hooks that offer it: `after_specify` and `after_plan`. The command opens a feature's markdown in a local browser review surface. The reviewer annotates text and sends notes. The agent applies the notes to the `.md` files, and the browser live-reloads.
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+## Working rules
 
-## 1. Think Before Coding
+- State your assumptions. If a request is unclear, ask before you code.
+- Write the minimum code that solves the problem. Add no speculative features or abstractions.
+- Change only what the task needs. Match the existing style. Remove only the orphans that your change creates.
+- Define a check for each change (a test, a script, a build), and run it before you finish.
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+## Commands
 
-Before implementing:
+Run these from the repo root. The repo uses Node 24 (`.nvmrc`) and pnpm 12 (`packageManager`).
 
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+| Command                                        | What it does                                                                                        |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `pnpm install`                                 | Install the workspace (`web`, `web-review`).                                                        |
+| `pnpm review:build`                            | Build the review runtime into `templates/web-review/`. Run it before `pnpm check` on a fresh clone. |
+| `pnpm check`                                   | Validate the manifests, check metadata sync, run oxfmt and oxlint, and lint the shipped command.    |
+| `pnpm test`                                    | Run the `web-review` unit test (`node --test`).                                                     |
+| `pnpm web:build`                               | Build the GitHub Pages site into `web/dist/`.                                                       |
+| `pnpm build`                                   | Build the release zip into `dist/`. Needs `zip` and `unzip`.                                        |
+| `pnpm sync`                                    | Copy the identity fields from `package.json` into `extension.yml` and `catalog.json`.               |
+| `specify extension add --dev "$(pwd)" --force` | Install this checkout into its own Spec Kit project. From another project, pass the checkout path.  |
 
-## 2. Simplicity First
+CI (`.github/workflows/ci.yml`) runs `review:build`, `check`, `test`, and `web:build` on each pull request.
 
-**Minimum code that solves the problem. Nothing speculative.**
+## Layout
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+| Path                             | Purpose                                                                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `commands/speckit.axi.review.md` | The shipped command prompt.                                                                                                     |
+| `web-review/src/`                | The review surface source. `core/` is shared logic, `server/` is the Node server and agent CLI, `scripts/` is the browser code. |
+| `templates/web-review/`          | Build output of `web-review` (gitignored). The zip ships it, and it runs from `.specify/extensions/axi/templates/web-review/`.  |
+| `extension.yml`, `catalog.json`  | The extension manifest and the catalog entry.                                                                                   |
+| `docs/`, `web/`                  | The user docs (synced to the GitHub Wiki) and the landing site (GitHub Pages).                                                  |
+| `.github/scripts/`               | Validation, sync, zip, and release scripts.                                                                                     |
 
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+## Conventions
 
-## 3. Surgical Changes
+- `package.json` owns the identity fields (description, author, homepage, repository, license, keywords). Edit them there, then run `pnpm sync`.
+- The release pipeline owns `version`, `download_url`, the timestamps, and the pinned install URLs in the docs. Do not edit them by hand.
+- `pnpm validate` fails when `requires` differs between `extension.yml` and `catalog.json`. Change both files together.
+- A change to the command surface updates these files together: the command file, `provides.commands` in `extension.yml`, the `provides.commands` count in `catalog.json`, and the `REQUIRED` list in `.github/scripts/validate-manifest.mjs`.
+- A change to the `hooks` block in `extension.yml` also updates the `provides.hooks` count in `catalog.json` and the hook lists in `README.md`, `WORKFLOW.md`, `docs/`, and `web/index.html`. `pnpm validate` checks the count.
+- Renaming or removing the command is a breaking change. Use a `BREAKING CHANGE:` footer. The release preset (angular) ignores a `feat!:` header. Commits follow Conventional Commits, because semantic-release reads them.
+- In `commands/`, write every Spec Kit command as a token, for example `__SPECKIT_COMMAND_AXI_REVIEW__` or `__SPECKIT_COMMAND_PLAN__`. At install time Spec Kit replaces it with `/speckit.axi.review` for slash-command agents or `/speckit-axi-review` for skills-based agents such as Claude Code. The token includes the `/`, so do not write a `/` before it. Tokens need Spec Kit `>=0.12.17`, the value of `requires.speckit_version`. User docs keep the readable names.
+- Renovate (`renovate.json`) is the only dependency bot. Updates to `web-review/package.json` use `fix`, because they change the shipped `templates/web-review/`. All other updates use `chore`.
+- The shipped command uses plain English and no em dash. `pnpm lint:content` enforces this.
+- `docs/` and `web/` are for users. Put contributor topics in `CONTRIBUTING.md`. The `maintain-docs` skill keeps the docs in sync with the command.
 
-**Touch only what you must. Clean up only your own mess.**
+## Gotchas
 
-When editing existing code:
-
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+- `pnpm validate` and `pnpm build` need `templates/web-review/axi-server.mjs` and `axi-core.mjs`. Run `pnpm review:build` first.
+- `.extensionignore` keeps a `--dev` install equal to the zip. Keep it in sync with `INCLUDE` in `.github/scripts/build-zip.mjs`.
+- `build-server.ts` and the unit test run as TypeScript directly in Node. Use explicit `.ts` import specifiers.
+- `.specify/`, `specs/`, and `.speckit-axi/` (review session state) are local and gitignored.
+- To develop the browser surface, start a review server on port 4317, then run `astro dev --background` inside `web-review/`. See the comment in `web-review/astro.config.ts`.
 
 <!-- SPECKIT START -->
 
@@ -76,109 +65,10 @@ shell commands, and other important information, read the current plan
 
 <!-- SPECKIT END -->
 
-## Agent Boundaries
-
-This repository ships the **axi** extension for Spec Kit. Axi renders a
-feature's markdown artifacts in a local browser review surface so a human can
-annotate the exact text and chat comments; the queued notes go back to the
-agent, which edits the canonical `.md` files while the browser live-reloads.
-It exposes a single command, `/speckit.axi.review`, plus the review runtime
-under `templates/web-review/` (built from `web-review/src/`). The user-facing
-docs live under `docs/` (synced to the GitHub Wiki) and `web/` (the GitHub
-Pages landing site); the `maintain-docs` skill keeps both in sync with the
-canonical sources.
-
-| Agent         | Skill Surface                                | Notes                                                                                  |
-| ------------- | -------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Spec Kit core | `commands/speckit.axi.review.md` (canonical) | Shipped in the release zip alongside the review runtime under `templates/web-review/`. |
-
-Rules:
-
-1. Canonical command file lives at `commands/speckit.axi.review.md`.
-2. Changing the command surface requires updating in lockstep: the canonical file, `extension.yml` `provides.commands`, the `catalog.json` `provides.commands` count, and the `REQUIRED` list in `.github/scripts/validate-manifest.mjs`.
-3. Renaming or removing the command is a breaking change and requires a `feat!:` or `BREAKING CHANGE:` commit.
-4. Shipped content (command, templates) uses plain English and no em dashes; `.github/scripts/lint-content.mjs` enforces this.
-
-## Web Review App (`web-review/`)
-
-The `web-review/` directory is the Astro + Tailwind front end and the source of
-the whole review surface, all written in TypeScript under `src/`:
-
-- `src/core/` - pure helpers shared by the browser and the server (and the test).
-- `src/server/` - the review server + agent CLI (`cli.ts` is the entry).
-- `src/scripts/` - the browser modules (`axi.ts` is the entry, loaded by `index.astro`).
-
-The shipped runtime is two compiled, zero-dependency ESM files that Node runs
-directly, emitted to `templates/web-review/axi-core.mjs` and
-`templates/web-review/axi-server.mjs`. They are build outputs (gitignored,
-regenerated by `pnpm --filter @spec-kit-axi/web-review build:server`, which runs
-esbuild on `src/core` + `src/server`); the release zip and `validate-manifest`
-expect them at those exact paths, so CI and the release run `review:build`
-before checking or zipping. `astro build` bundles the browser surface
-(`src/scripts` + `src/core`, optimized by Vite) to `templates/web-review/dist/`
-(gitignored, populated only by the build), next to the `axi-server.mjs` that
-serves it. The whole runtime ships under `templates/` so the zip and the repo
-share one layout; the extension installs to `.specify/extensions/axi/`, so at
-runtime the server is `.specify/extensions/axi/templates/web-review/axi-server.mjs`.
-`pnpm --filter @spec-kit-axi/web-review build` does both. The unit test lives in
-`web-review/test/` (run with `pnpm review:test`). Run its commands from inside
-`web-review/`.
-
-### Development
-
-When starting the dev server, use background mode:
-
-```sh
-astro dev --background
-```
-
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
-
-### Documentation
-
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
-
 <!-- CODEGRAPH_START -->
 
 ## CodeGraph
 
-This project has a CodeGraph MCP server (`codegraph_*` tools) configured. CodeGraph is a tree-sitter-parsed knowledge graph of every symbol, edge, and file. Reads are sub-millisecond and return structural information grep cannot.
-
-### When to prefer codegraph over native search
-
-Use codegraph for **structural** questions — what calls what, what would break, where is X defined, what is X's signature. Use native grep/read only for **literal text** queries (string contents, comments, log messages) or after you already have a specific file open.
-
-| Question                                                       | Tool                                         |
-| -------------------------------------------------------------- | -------------------------------------------- |
-| "How does X work? / trace X / explain a system / architecture" | `codegraph_explore` (seed with symbol names) |
-| "Where is X defined?" / "Find symbol named X"                  | `codegraph_search`                           |
-| "What calls function Y?"                                       | `codegraph_callers`                          |
-| "What does Y call?"                                            | `codegraph_callees`                          |
-| "What would break if I changed Z?"                             | `codegraph_impact`                           |
-| "Show me Y's signature / source / docstring"                   | `codegraph_node`                             |
-| "Give me focused context for a task/area"                      | `codegraph_context`                          |
-| "What files exist under path/"                                 | `codegraph_files`                            |
-| "Is the index healthy?"                                        | `codegraph_status`                           |
-
-### Rules of thumb
-
-- **`codegraph_explore` is the workhorse for understanding questions** ("how does X work", "trace…", "explain the Y system"). Feed it the key symbol/file names and read its output (line-numbered source from many files in one call). If the question names nothing concrete, do one quick `codegraph_search`/`codegraph_context` to surface the names, then explore with them. Fill gaps with `codegraph_node`/Read — don't grep-and-read your way through; that's the loop explore replaces.
-- **Delegating exploration to a subagent?** Tell it to call `codegraph_explore` first and trust the result. A generic "explore"-style agent defaults to grep+Read and treats codegraph as just a search index, throwing away the token savings.
-- **Trust codegraph results.** They come from a full AST parse. Do NOT re-verify them with grep — that's slower, less accurate, and wastes context.
-- **Don't grep first** when looking up a symbol by name. `codegraph_search` is faster and returns kind + location + signature in one call.
-- **Index lag**: the file watcher debounces ~500ms behind writes; don't re-query immediately after editing a file in the same turn.
-
-### If `.codegraph/` doesn't exist
-
-The MCP server returns "not initialized." Ask the user: _"I notice this project doesn't have CodeGraph initialized. Want me to run `codegraph init -i` to build the index?"_
+`.mcp.json` configures the CodeGraph MCP server. When `.codegraph/` holds an index, use `codegraph_explore` for structural code questions before grep. If the project has no index, ask the user before you run `codegraph init`.
 
 <!-- CODEGRAPH_END -->

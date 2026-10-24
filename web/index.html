@@ -42,7 +42,7 @@
         "operatingSystem": "Any",
         "url": "https://d0whc3r.github.io/spec-kit-axi/",
         "downloadUrl": "https://github.com/d0whc3r/spec-kit-axi/releases",
-        "softwareVersion": "1.1.3",
+        "softwareVersion": "1.1.4",
         "description": "A Spec Kit extension that renders a feature's markdown in a local browser review surface for human annotation, then returns the queued notes to the agent to apply.",
         "license": "https://github.com/d0whc3r/spec-kit-axi/blob/main/LICENSE",
         "author": {
@@ -67,7 +67,7 @@
             "name": "Why does specify extension add axi fail?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The extension lives in Spec Kit's community catalog, which is discovery only and carries install_allowed: false. The CLI can list it but will not install until you opt in. Either install directly with --from <release-zip-url>, or approve the community catalog once."
+              "text": "Spec Kit lists the extension in its community catalog, which is discovery only (install_allowed: false). The CLI shows it but does not install it, and Spec Kit advises against changing that setting. Install directly with specify extension add axi --from <release-zip-url>."
             }
           },
           {
@@ -115,7 +115,7 @@
             "name": "How do I update the extension?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "If you approved the community catalog, run specify extension update axi. Otherwise rerun the direct install with the newer release URL. Your specs/ tree is not touched."
+              "text": "Run the install command with the newer release URL and add --force. Your specs/ tree does not change."
             }
           }
         ]
@@ -181,13 +181,13 @@
                   Direct install
                 </button>
                 <button
-                  id="tab-install-catalog"
+                  id="tab-install-update"
                   class="tab"
                   role="tab"
                   aria-selected="false"
-                  aria-controls="panel-install-catalog"
+                  aria-controls="panel-install-update"
                 >
-                  Via catalog
+                  Update
                 </button>
               </div>
             </div>
@@ -201,26 +201,22 @@
               <pre data-copy><code>specify extension add axi \
   --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip</code></pre>
               <p class="install-hint">
-                Works with zero configuration. This is the most reliable path and the same one you
-                use to pin a version.
+                Works with zero configuration. Change the version in the URL to pin a release.
               </p>
             </div>
 
             <div
-              id="panel-install-catalog"
+              id="panel-install-update"
               class="tab-panel"
               role="tabpanel"
-              aria-labelledby="tab-install-catalog"
+              aria-labelledby="tab-install-update"
               hidden
             >
-              <pre data-copy><code>specify extension catalog add \
-  https://raw.githubusercontent.com/github/spec-kit/main/extensions/catalog.community.json \
-  --name community --install-allowed
-specify extension add axi</code></pre>
+              <pre data-copy><code>specify extension add axi --force \
+  --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip</code></pre>
               <p class="install-hint">
-                Prefer installing and updating by name? Approve the community catalog once, then
-                <code>add</code> and <code>update</code> resolve <code>axi</code> automatically. See
-                <a href="#install-help">install help</a> for why this is needed.
+                Run the install command again with <code>--force</code> to replace an installed
+                version. Your <code>specs/</code> tree does not change.
               </p>
             </div>
           </div>
@@ -235,7 +231,7 @@ specify extension add axi</code></pre>
 
           <ul class="hero-badges">
             <li>One command</li>
-            <li>Requires Spec Kit &gt;= 0.2.0</li>
+            <li>Requires Spec Kit &gt;= 0.12.17</li>
             <li>MIT licensed</li>
             <li>Runs locally on 127.0.0.1</li>
             <li>Markdown stays the source of truth</li>
@@ -286,9 +282,10 @@ specify extension add axi</code></pre>
         <div class="container">
           <h2>One command</h2>
           <p class="section-lede">
-            <code>/speckit.axi.review</code> opens the review surface for the active feature,
-            collects your annotations and comments, and applies the queued feedback to the markdown.
-            It does not generate new files; it edits the feature's existing documents in place.
+            <code>/speckit.axi.review</code> (<code>/speckit-axi-review</code> in skills-based
+            agents such as Claude Code) opens the review surface for the active feature, collects
+            your annotations and comments, and applies the queued feedback to the markdown. It does
+            not generate new files; it edits the feature's existing documents in place.
           </p>
 
           <div class="table-wrap">
@@ -306,13 +303,24 @@ specify extension add axi</code></pre>
                     Open a feature's markdown in a browser review surface, collect annotations and
                     comments, and apply the queued feedback to the canonical <code>.md</code> files.
                     Optionally name the feature directory, for example
-                    <code>/speckit.axi.review specs/001-my-feature</code>; otherwise the agent
-                    resolves it from your branch or the most recent <code>specs/*</code> directory.
+                    <code>/speckit.axi.review specs/001-my-feature</code>; otherwise the agent uses
+                    the feature Spec Kit marks as active, then your branch, then the most recent
+                    <code>specs/*</code> directory. Skills-based agents name it
+                    <code>/speckit-axi-review</code> (Claude Code) or
+                    <code>$speckit-axi-review</code> (Codex).
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
+
+          <p class="note">
+            Spec Kit also offers a review through two optional hooks. After
+            <code>/speckit.specify</code>, the <code>after_specify</code> hook offers to open
+            <code>spec.md</code>. After <code>/speckit.plan</code>, the <code>after_plan</code> hook
+            offers to open <code>plan.md</code> and the other plan artifacts. Accept the offer, or
+            run the command later.
+          </p>
 
           <p class="note">
             Under the hood, <code>/speckit.axi.review</code> drives a small zero-dependency Node
@@ -412,9 +420,8 @@ specify extension add axi</code></pre>
             <li>
               <h3>Install the extension</h3>
               <p>
-                You need Spec Kit &gt;= 0.2.0 initialized (<code>specify init</code>) and a feature
-                with some markdown to review. Install directly from the latest release; this needs
-                no catalog setup and is the recommended path:
+                You need Spec Kit &gt;= 0.12.17 initialized (<code>specify init</code>) and a
+                feature with some markdown to review. Install directly from the latest release:
               </p>
               <pre data-copy><code>specify extension add axi \
   --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip</code></pre>
@@ -422,15 +429,18 @@ specify extension add axi</code></pre>
               <pre data-copy><code>cat .specify/extensions/.registry   # 'axi' entry present
 ls .specify/extensions/axi          # extension files present</code></pre>
               <p class="step-aside">
-                Prefer <code>specify extension add axi</code> by name? That needs the community
-                catalog approved first. See <a href="#install-help">install help</a>.
+                <code>specify extension search axi</code> and
+                <code>specify extension info axi</code> show the catalog entry. Install by name does
+                not work, because the community catalog is discovery only. See
+                <a href="#install-help">install help</a>.
               </p>
             </li>
             <li>
               <h3>Open the review surface</h3>
               <p>
                 Run the command in your Spec Kit-aware assistant. Name the feature directory, or let
-                the agent resolve it from your branch.
+                the agent resolve the active feature. In Claude Code the command is
+                <code>/speckit-axi-review</code>.
               </p>
               <pre data-copy><code>/speckit.axi.review specs/001-my-feature</code></pre>
               <p>
@@ -466,48 +476,41 @@ ls .specify/extensions/axi          # extension files present</code></pre>
 
           <div class="callout callout-error">
             <p class="callout-title">The error you may see</p>
-            <pre><code>Error: 'axi' is available in the 'community' catalog but installation
-is not allowed from that catalog.
-
-To enable installation, add 'axi' to an approved catalog
-(install_allowed: true) in .specify/extension-catalogs.yml.</code></pre>
+            <pre><code>Error: 'axi' was found in the 'community' catalog, which is discovery-only
+...
+Don't flip such a catalog to install_allowed.</code></pre>
           </div>
 
           <p>
-            Spec Kit ships the community catalog as <strong>discovery only</strong>. It carries
-            <code>install_allowed: false</code> by design, so the CLI can list community extensions
-            but will not install one until you opt in. You have two ways to opt in.
+            Spec Kit lists community extensions in a <strong>discovery-only</strong> catalog. That
+            catalog has <code>install_allowed: false</code>, so Spec Kit does not install from it.
+            Spec Kit also advises against changing that setting. Install from the release archive
+            instead.
           </p>
 
           <div class="install-options">
             <article class="card">
-              <h3>Option A: Direct install (recommended)</h3>
+              <h3>Install a release</h3>
               <p>
-                Install straight from the release archive. No catalog config, always works, and it
-                is the only way to pin a specific version.
+                Install straight from the release archive. Spec Kit asks you to confirm the source.
+                Change the version in the URL to pin a release.
               </p>
               <pre data-copy><code>specify extension add axi \
   --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip</code></pre>
               <p class="example-note">
-                To update later, run the same command with a newer version URL.
+                Community extensions are author-maintained, and Spec Kit does not review them.
+                Review the source before you install.
               </p>
             </article>
             <article class="card">
-              <h3>Option B: Approve the community catalog</h3>
+              <h3>Update to a newer release</h3>
               <p>
-                Do this once if you want to install and update by name. It adds the catalog with
-                <code>install_allowed: true</code> to <code>.specify/extension-catalogs.yml</code>.
+                Run the install command with the newer release URL and add <code>--force</code> to
+                replace the installed version.
               </p>
-              <pre data-copy><code>specify extension catalog add \
-  https://raw.githubusercontent.com/github/spec-kit/main/extensions/catalog.community.json \
-  --name community --install-allowed
-
-specify extension add axi
-specify extension update axi</code></pre>
-              <p class="example-note">
-                Community extensions are author-maintained and not reviewed by Spec Kit. Review the
-                source before approving a catalog.
-              </p>
+              <pre data-copy><code>specify extension add axi --force \
+  --from &lt;newer-release-zip-url&gt;</code></pre>
+              <p class="example-note">Your <code>specs/</code> tree does not change.</p>
             </article>
           </div>
         </div>
@@ -520,11 +523,10 @@ specify extension update axi</code></pre>
             <details>
               <summary>Why does <code>specify extension add axi</code> fail?</summary>
               <p>
-                The extension lives in Spec Kit's community catalog, which is discovery only and
-                carries <code>install_allowed: false</code>. The CLI can list it but will not
-                install until you opt in. Either install directly with
-                <code>--from &lt;release-zip-url&gt;</code>, or approve the community catalog once.
-                Full steps are in <a href="#install-help">install help</a>.
+                Spec Kit lists the extension in its community catalog, which is discovery only
+                (<code>install_allowed: false</code>). The CLI shows it but does not install it.
+                Install directly with <code>--from &lt;release-zip-url&gt;</code>. Full steps are in
+                <a href="#install-help">install help</a>.
               </p>
             </details>
             <details>
@@ -573,9 +575,8 @@ specify extension update axi</code></pre>
             <details>
               <summary>How do I update the extension?</summary>
               <p>
-                If you approved the community catalog, run
-                <code>specify extension update axi</code>. Otherwise rerun the direct install with
-                the newer release URL. Your <code>specs/</code> tree is not touched.
+                Run the install command with the newer release URL and add <code>--force</code>.
+                Your <code>specs/</code> tree does not change.
               </p>
             </details>
           </div>

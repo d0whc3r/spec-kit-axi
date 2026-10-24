@@ -43,7 +43,7 @@ Run from inside `web-review/`:
 From the repo root the same three are exposed as `review:dev`, `review:build`,
 and `review:test` (e.g. `pnpm review:build`).
 
-> Node 22 strips the TypeScript types, so `build-server.ts` and the test files
+> Node 24 strips the TypeScript types, so `build-server.ts` and the test files
 > run directly without a separate compile step.
 
 ## The server CLI (`axi-server.mjs`)

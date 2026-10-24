@@ -4,13 +4,13 @@ Five minutes from zero to a markdown review in your browser.
 
 ## Prerequisites
 
-- Spec Kit `>= 0.2.0` initialized in your project. Verify with:
+- Spec Kit `>= 0.12.17` initialized in your project. Verify with:
   ```bash
   specify --version
   ls .specify
   ```
 - A Spec Kit-aware assistant that can resolve slash commands.
-- Node.js available on your `PATH`. The review surface runs with `node` and
+- Node.js 22 or later on your `PATH`. The review surface runs with `node` and
   has no install step.
 - A feature directory under `specs/` with some markdown to review (at least a
   `spec.md`).
@@ -26,29 +26,22 @@ cd my-project
 
 ## Step 1: Install the extension
 
-The recommended install resolves a release directly from the download URL. This
-needs no catalog setup and always works:
+Install a release from its download URL:
 
 ```bash
 specify extension add axi --from \
   https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
 ```
 
-Change the version in the URL to pin a different release.
+Spec Kit shows the source URL and asks you to confirm. Change the version in the URL to pin a different release.
 
-Prefer to install and update by name with `specify extension add axi`? That
-resolves the extension from Spec Kit's community catalog, which ships as
-discovery only (`install_allowed: false`). Approve it once:
+To see the catalog entry first, run `specify extension search axi` or `specify extension info axi`. Install by name (`specify extension add axi`) does not work. Spec Kit lists community extensions in a discovery-only catalog and does not install from it. Spec Kit also advises against setting that catalog to `install_allowed`. See [Troubleshooting](Troubleshooting.md#installation-errors).
+
+To update later, run the install command with a newer release URL and add `--force`:
 
 ```bash
-specify extension catalog add \
-  https://raw.githubusercontent.com/github/spec-kit/main/extensions/catalog.community.json \
-  --name community --install-allowed
-specify extension add axi
+specify extension add axi --from <newer-release-zip-url> --force
 ```
-
-See [Troubleshooting](Troubleshooting.md#installation-errors) for the full
-explanation of the community catalog error.
 
 Confirm install:
 
@@ -67,6 +60,8 @@ do not have one yet, create it with the Spec Kit core commands first:
 /speckit.plan
 ```
 
+When `/speckit.specify` finishes, the optional `after_specify` hook offers to open `spec.md` in the review surface. When `/speckit.plan` finishes, the optional `after_plan` hook offers to open `plan.md` and the other plan artifacts. Accept the offer to skip Step 3, or run the command yourself.
+
 Any `.md` under the feature directory is fair game: `spec.md`, `plan.md`,
 `tasks.md`, and nested files such as `contracts/`.
 
@@ -78,6 +73,8 @@ resolve it from your branch:
 ```text
 /speckit.axi.review specs/001-my-feature
 ```
+
+Skills-based agents show the command under another name: `/speckit-axi-review` in Claude Code, `$speckit-axi-review` in Codex.
 
 The agent starts a local review server bound to `127.0.0.1`, opens your
 browser, and tells you the surface is ready. Each markdown file shows up as a
@@ -111,9 +108,7 @@ Pass the directory as the command argument:
 /speckit.axi.review specs/002-some-other-feature
 ```
 
-Without an argument the agent picks the directory from your git branch, the one
-`specs/*` directory if there is exactly one, or the most recently modified
-`specs/*` directory. If it is still unclear, it asks.
+Without an argument the agent picks the feature that Spec Kit marks as active (`.specify/feature.json`), then the directory that matches your git branch, the one `specs/*` directory if there is exactly one, or the most recently modified `specs/*` directory. If it is still unclear, it asks.
 
 ## What next
 

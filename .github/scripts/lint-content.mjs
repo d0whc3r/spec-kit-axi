@@ -31,6 +31,18 @@ function lintProse(rel, text, fail) {
   }
 }
 
+// Shipped commands name Spec Kit commands only through __SPECKIT_COMMAND_<NAME>__
+// tokens, which Spec Kit resolves per agent at install time. oxfmt turns a token
+// outside backticks into bold text, so check for that too.
+function lintCommandRefs(rel, text, fail) {
+  if (/(^|[\s`(])\/speckit\.[a-z]/m.test(text)) {
+    fail(`literal Spec Kit command name in ${rel}: use a __SPECKIT_COMMAND_<NAME>__ token`);
+  }
+  if (text.includes("**SPECKIT_COMMAND_")) {
+    fail(`token formatted as bold in ${rel}: keep each token inside backticks`);
+  }
+}
+
 export async function lintContent() {
   let failed = false;
   const fail = (msg) => {
@@ -40,7 +52,11 @@ export async function lintContent() {
 
   for (const cmd of COMMANDS) {
     if (!exists(cmd)) fail(`${cmd} missing`);
-    else lintProse(cmd, read(cmd), fail);
+    else {
+      const text = read(cmd);
+      lintProse(cmd, text, fail);
+      lintCommandRefs(cmd, text, fail);
+    }
   }
 
   // oxfmt pass over the shipped markdown.

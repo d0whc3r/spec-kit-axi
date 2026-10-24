@@ -4,46 +4,28 @@ Common breakages and their fixes.
 
 ## Installation errors
 
-### "installation is not allowed from that catalog"
+### "found in the 'community' catalog, which is discovery-only"
 
 ```text
-Error: 'axi' is available in the 'community' catalog but installation is
-not allowed from that catalog.
-
-To enable installation, add 'axi' to an approved catalog
-(install_allowed: true) in .specify/extension-catalogs.yml.
+Error: 'axi' was found in the 'community' catalog, which is discovery-only
 ```
 
-This is expected behavior, not a broken release. Spec Kit ships the community
-catalog as **discovery only**. It carries `install_allowed: false` by design,
-so the CLI can list community extensions but will not install one until you opt
-in. You have two ways to opt in.
+This is expected behavior. Spec Kit lists community extensions in a discovery-only catalog (`install_allowed: false`) and does not install from it. Spec Kit advises against setting that catalog to `install_allowed`.
 
-**Option A: install directly (recommended).** No catalog config, always works,
-and it is the only way to pin a specific version:
+Install the extension directly from the release archive. This is also how you pin a version:
 
 ```bash
 specify extension add axi --from \
   https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
 ```
 
-To update later, rerun the same command with a newer version URL.
+To update later, run the same command with a newer release URL and add `--force`.
 
-**Option B: approve the community catalog.** Do this once if you want to
-install and update by name. It adds the catalog with `install_allowed: true`
-to `.specify/extension-catalogs.yml`:
+Community extensions are author-maintained, and Spec Kit does not review them. Review the source before you install.
 
-```bash
-specify extension catalog add \
-  https://raw.githubusercontent.com/github/spec-kit/main/extensions/catalog.community.json \
-  --name community --install-allowed
+### "Configuration may be required"
 
-specify extension add axi
-specify extension update axi
-```
-
-Community extensions are author-maintained and not reviewed by Spec Kit. Review
-the source before approving a catalog.
+`specify extension add` prints this warning for every extension that ships no config file. Axi has no configuration, so you can ignore it.
 
 ## The slash command does not appear in my assistant
 
@@ -57,11 +39,12 @@ the source before approving a catalog.
    ls .specify/extensions/axi
    ```
    You should see `extension.yml`, `commands/`, `templates/`.
-3. Restart the host agent. Some agents cache the slash command surface at
+3. Look for the right name. Slash-command agents show `/speckit.axi.review`. Skills-based agents show the command under another name: `/speckit-axi-review` in Claude Code, `$speckit-axi-review` in Codex.
+4. Restart the host agent. Some agents cache the slash command surface at
    startup. Open a new chat or reload the agent's window.
-4. If it still does not appear, try a fresh install:
+5. If it still does not appear, reinstall the release:
    ```bash
-   specify extension update axi
+   specify extension add axi --from <release-zip-url> --force
    ```
 
 ## The review server did not start

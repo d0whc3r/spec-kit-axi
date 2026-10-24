@@ -10,14 +10,23 @@
   "documentation": "https://github.com/d0whc3r/spec-kit-axi/wiki",
   "changelog": "https://github.com/d0whc3r/spec-kit-axi/blob/main/CHANGELOG.md",
   "license": "MIT",
+  "category": "docs",
+  "effect": "read-write",
   "requires": {
-    "speckit_version": ">=0.2.0"
+    "speckit_version": ">=0.12.17",
+    "tools": [
+      {
+        "name": "node",
+        "version": ">=22.0.0",
+        "required": true
+      }
+    ]
   },
   "provides": {
     "commands": 1,
-    "hooks": 0
+    "hooks": 2
   },
-  "tags": ["axi", "spec-kit", "spec-kit-extension"],
+  "tags": ["annotation", "axi", "browser", "human-in-the-loop", "markdown", "review"],
   "verified": false,
   "created_at": "2026-06-28T00:00:00Z",
   "updated_at": "2026-08-03T15:23:29Z"

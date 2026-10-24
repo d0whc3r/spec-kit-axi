@@ -120,6 +120,22 @@ help: tasks create --title "..." [--body "..."]
 
 Every operation must be completable with flags alone. If a required value is missing, fail immediately with a clear error — don't prompt for it. Suppress prompts from wrapped tools.
 
+### Fail loud on unrecognized input
+
+Reject unknown flags and arguments — never silently ignore them. A dropped flag is worse than an error: the agent gets plausible-looking output it believes is scoped or filtered, then proceeds confidently on wrong data. This is the same guarantee a CLI already owes for an unknown _command_; extend it to flags.
+
+```
+$ tasks list --stat closed
+error: unknown flag --stat for `list`
+help: valid flags for `list`: --state, --assignee, --limit (--help always allowed)
+```
+
+- **Validate before any dependency call**, with exit code 2 — the same as a missing required flag. Each command declares its own known flags; an unrecognized one is rejected by name and the command's valid flags are listed.
+- **`--help` always passes** — it's the one universal flag. Beyond it, a CLI may standardize its own always-allowed globals (e.g. an `--account` selector); whatever the set, those flags pass on every command and are never reported as unknown.
+- **Renamed or removed flags get a targeted hint**, not the generic list — point at what replaced them (`--status was renamed; use --state instead`) so the agent self-corrects in one step.
+- **Per-subcommand flag sets.** For grouped nouns where one command dispatches to subcommands (a `list` vs a `create` under the same noun), validate against the _subcommand's_ flags — they differ, and only the subcommand layer knows which is in play.
+- **Make the error self-correcting in one turn.** The agent's deterministic next move after an unknown-flag error is to run `<command> --help` (e.g. `tasks list --help`) — so fold that lookup into the error: list the valid flags inline, or print the command's concise `--help` block directly beneath it. Per §4 the expensive cost is the follow-up call, and per §10 per-command help is already concise, so inlining it collapses the two-turn correction into one.
+
 ### Output channels
 
 - **stdout**: all structured output the agent consumes — data, errors, suggestions
@@ -164,7 +180,7 @@ help[2]:
 
 - **Claude Code**: use native hooks in `~/.claude/settings.json` or project `.claude/settings.json`. Prefer `SessionStart` to inject compact context via stdout
 - **Codex**: use native hooks in `~/.codex/hooks.json` or `<repo>/.codex/hooks.json`, and ensure `[features].hooks = true` in `config.toml`. Prefer `SessionStart` for ambient context via stdout
-- **OpenCode**: use a managed plugin in `~/.config/opencode/plugins/`. Prefer ambient system-context injection for the home view rather than adding a custom tool
+- **OpenCode**: use a managed plugin in `~/.config/opencode/plugins/` or `<repo>/.opencode/plugins/`. Prefer ambient system-context injection for the home view rather than adding a custom tool
 
 **Also ship an installable skill (secondary recommendation):**
 
@@ -229,3 +245,29 @@ description: Manage project tasks in the current workspace
 ```
 
 Every subcommand should support `--help` with a concise, complete reference: available flags with defaults, required arguments, and 2-3 usage examples. Keep it focused on the requested subcommand — don't dump the entire CLI's manual.
+
+### Identify yourself instantly: the `--version` fast path
+
+`-v`, `-V`, and `--version` must all print the bare version and exit 0. Agents and their harnesses probe `--version` constantly - to confirm a tool is installed, to check whether a fix has shipped, to decide whether to suggest `update`. That makes latency an ergonomics property, not just a perf tweak: a probe that takes 80 ms is 80 ms of every session start, paid before any useful work happens.
+
+The trap is ESM static imports. If `bin/<tool>.js` statically imports the module that builds the command graph, every dependency in that graph is fully evaluated _before_ the version check runs. One heavy import anywhere in the tree - an SDK, a server framework - is then paid on every `--version`.
+
+Answer the version before the graph loads: keep the version in a leaf module that imports only node builtins, and defer the real CLI to a dynamic `import()`.
+
+```js
+#!/usr/bin/env node
+import { tryFastPath } from "axi-sdk-js/fast-path";
+import { VERSION } from "../src/version.js"; // leaf module - node builtins only
+
+if (!tryFastPath(process.argv.slice(2), { version: VERSION })) {
+  const { main } = await import("../src/cli.js"); // heavy graph loads only here
+  await main();
+}
+```
+
+`axi-sdk-js/fast-path` is a dedicated subpath export that imports nothing at all, so pulling it in never drags in `runAxiCli` or its dependencies. `tryFastPath` handles only a bare, single-argument version flag and returns `false` for everything else, so all other argv - including version flags in trailing positions - falls through to `runAxiCli`, which stays the single owner of the general case. Its accepted flags and output are identical to the SDK's own version handling, so adopting it changes nothing an agent can observe except the latency.
+
+Two things keep this honest:
+
+- The version must come from a **leaf** module. If `VERSION` is defined inside `cli.ts`, importing it re-pulls the whole graph and the fast path buys nothing.
+- Guard it with a test that measures the version path against the `node -e "console.log(1)"` floor measured in the same process, rather than an absolute millisecond budget that goes flaky across machines.

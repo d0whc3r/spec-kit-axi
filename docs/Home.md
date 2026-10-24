@@ -6,6 +6,8 @@ annotate, and sends notes. The agent applies them to the canonical `.md` files
 while the page live-reloads to show each change. Markdown stays the source of
 truth, and the reviewer's notes never leave the machine.
 
+Run `/speckit.axi.review` (`/speckit-axi-review` in skills-based agents such as Claude Code) to start a review. Spec Kit also offers the review after `/speckit.specify` and `/speckit.plan` through two optional hooks.
+
 ## Start here
 
 | Page                                      | When to read                                                               |
@@ -25,11 +27,9 @@ truth, and the reviewer's notes never leave the machine.
 | --------------------- | ------------------------------------------------------------------------------------------------ |
 | `/speckit.axi.review` | Open a feature's markdown in a browser review surface, collect annotations, and apply the notes. |
 
-`/speckit.axi.review` takes an optional feature directory, for example
-`/speckit.axi.review specs/001-my-feature`. Without one, the agent resolves the
-feature from your git branch or the most recent `specs/*` directory. The
-command does not generate a new file; it edits the feature's existing markdown
-in place.
+`/speckit.axi.review` takes an optional feature directory, for example `/speckit.axi.review specs/001-my-feature`. Without one, the agent uses the feature that Spec Kit marks as active, then your git branch, then the most recent `specs/*` directory. The command does not generate a new file; it edits the feature's existing markdown in place.
+
+Skills-based agents show the command under another name: `/speckit-axi-review` in Claude Code, `$speckit-axi-review` in Codex.
 
 ## Source of truth
 

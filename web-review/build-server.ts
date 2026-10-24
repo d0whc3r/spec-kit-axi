@@ -27,7 +27,7 @@ const common: BuildOptions = {
   format: "esm",
   platform: "node",
   target: "node22",
-  // Readable output: this runs as a debuggable Node script, not a hot path.
+  // Minified to keep the shipped runtime small.
   minify: true,
   legalComments: "none",
 };

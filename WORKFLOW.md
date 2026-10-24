@@ -6,14 +6,17 @@ feedback back to the agent.
 
 ## Run a review
 
-Ask the agent to run `/speckit.axi.review`. Optionally name the feature directory:
+Ask the agent to run `/speckit.axi.review` (`/speckit-axi-review` in skills-based agents such as Claude Code). Optionally name the feature directory:
 
 ```text
 /speckit.axi.review specs/001-my-feature
 ```
 
-If you do not name one, the agent resolves it (the path you gave, the `specs/`
-directory matching your branch, the only one present, or the most recent).
+If you do not name one, the agent resolves it (the feature that Spec Kit marks as active, the `specs/` directory matching your branch, the only one present, or the most recent).
+
+Skills-based agents show the command under another name: `/speckit-axi-review` in Claude Code, `$speckit-axi-review` in Codex.
+
+Spec Kit also offers a review through two optional hooks. When `/speckit.specify` finishes, the `after_specify` hook offers to open `spec.md`. When `/speckit.plan` finishes, the `after_plan` hook offers to open `plan.md` and the other plan artifacts.
 
 The agent starts a local review surface and opens your browser at a
 `127.0.0.1` address. Every markdown file in the feature directory shows up as a

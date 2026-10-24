@@ -28,7 +28,7 @@ export function installBlock(catalog) {
     `specify extension add axi --from ${catalog.download_url}`,
     "```",
     "",
-    `Then run \`/speckit.axi.review\` in your assistant. Docs: ${catalog.homepage} | Wiki: ${catalog.documentation}`,
+    `Then run \`/speckit.axi.review\` in your assistant (\`/speckit-axi-review\` in skills-based agents such as Claude Code). Docs: ${catalog.homepage} | Wiki: ${catalog.documentation}`,
   ].join("\n");
 }
 

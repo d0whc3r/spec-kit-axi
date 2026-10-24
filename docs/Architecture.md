@@ -49,12 +49,14 @@ inspired by [lavish-axi](https://github.com/kunchenguid/lavish-axi).
 
 ## How a review is invoked
 
+You run `/speckit.axi.review` (`/speckit-axi-review` in skills-based agents such as Claude Code). Spec Kit also offers the command through two optional hooks, `after_specify` and `after_plan`, when `/speckit.specify` or `/speckit.plan` finishes. A hook runs the command with no argument.
+
 ```text
 You run /speckit.axi.review [feature-dir]
         ↓
 The slash command resolves to commands/speckit.axi.review.md
         ↓
-The agent resolves the feature directory (argument, branch, or most recent specs/*)
+The agent resolves the feature directory (argument, Spec Kit's active feature, branch, or most recent specs/*)
         ↓
 The agent runs:  node .specify/extensions/axi/templates/web-review/axi-server.mjs start <feature-dir>
         ↓

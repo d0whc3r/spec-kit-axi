@@ -3,6 +3,15 @@
 How a review flows: from launching the surface, through the annotate and apply
 loop, to ending the session.
 
+## Starting a review
+
+Run `/speckit.axi.review` (`/speckit-axi-review` in skills-based agents such as Claude Code) at any point. Spec Kit also offers a review through two optional hooks:
+
+- `after_specify`: when `/speckit.specify` finishes, Spec Kit offers to open `spec.md`.
+- `after_plan`: when `/speckit.plan` finishes, Spec Kit offers to open `plan.md` and the other plan artifacts.
+
+Accept the offer to start the review on the feature that Spec Kit marks as active, or skip it and run the command later.
+
 ## The review loop
 
 ```
@@ -47,10 +56,12 @@ on its own; it only acts on the queue you send.
 The agent picks the feature directory in this order:
 
 1. The path you named, if any.
-2. The `specs/` subdirectory matching the current git branch.
-3. The one `specs/*` directory, if there is exactly one.
-4. The most recently modified `specs/*` directory.
-5. Otherwise it asks you.
+2. The `SPECIFY_FEATURE_DIRECTORY` environment variable, if set.
+3. The `feature_directory` in `.specify/feature.json`. Spec Kit core writes this file when it creates or selects a feature.
+4. The `specs/` subdirectory matching the current git branch.
+5. The one `specs/*` directory, if there is exactly one.
+6. The most recently modified `specs/*` directory.
+7. Otherwise it asks you.
 
 ## Which files appear
 

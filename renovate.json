@@ -1,4 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"]
+  "description": "The release zip ships templates/web-review/, which is built from the web-review/ dependencies. Updates to web-review/package.json keep the fix type, because they change the shipped bundle and need a release. Every other update uses chore and does not trigger a semantic-release version.",
+  "extends": ["config:recommended", ":semanticCommitTypeAll(chore)"],
+  "packageRules": [
+    {
+      "description": "web-review/ dependencies are bundled into the shipped templates/web-review/.",
+      "matchFileNames": ["web-review/package.json"],
+      "semanticCommitType": "fix"
+    }
+  ]
 }

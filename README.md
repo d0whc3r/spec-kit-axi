@@ -8,8 +8,7 @@ while the browser live-reloads to show the changes.
 
 ## How it works
 
-1. Run `/speckit.axi.review`. The agent launches a local review surface (Node, zero
-   dependencies, loopback only) for the active feature and opens your browser.
+1. Run `/speckit.axi.review` (`/speckit-axi-review` in skills-based agents such as Claude Code). The agent launches a local review surface (Node, zero dependencies, loopback only) for the active feature and opens your browser.
 2. You read the artifacts as web pages. Select any phrase to attach a note, or
    type a general comment in the chat. Notes collect in a queue.
 3. Click **Send**. The agent receives the whole queue and edits the markdown.
@@ -46,20 +45,21 @@ the same content as plain markdown, open the [docs folder](docs/).
 | --------------------- | ------------------------------------------------------------------------------------------------ |
 | `/speckit.axi.review` | Open a feature's markdown in a browser review surface, collect annotations, and apply the notes. |
 
-`/speckit.axi.review` takes an optional feature directory, for example
-`/speckit.axi.review specs/001-my-feature`. Without one, the agent resolves the
-feature from your branch or the most recent `specs/*` directory. The command
-does not generate a new file; it edits the feature's existing markdown in place.
+`/speckit.axi.review` takes an optional feature directory, for example `/speckit.axi.review specs/001-my-feature`. Without one, the agent uses the feature that Spec Kit marks as active, then your branch, then the most recent `specs/*` directory. The command does not generate a new file; it edits the feature's existing markdown in place.
+
+Skills-based agents show the command under another name: `/speckit-axi-review` in Claude Code, `$speckit-axi-review` in Codex.
+
+The extension also registers two optional hooks. After `/speckit.specify`, the `after_specify` hook offers to open `spec.md` in the review surface. After `/speckit.plan`, the `after_plan` hook offers to open `plan.md` and the other plan artifacts.
 
 ## Requirements
 
-- Node.js (the review tool runs with `node`, no install step).
+- Spec Kit `>= 0.12.17` initialized in the project (`specify init`).
+- Node.js 22 or later (the review tool runs with `node`, no install step).
 - A browser and an internet connection for the renderer.
 
 ## Install
 
-Install directly from the latest release. This needs no catalog setup and is the
-recommended path:
+Install directly from the latest release:
 
 ```bash
 specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
@@ -67,16 +67,7 @@ specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/release
 
 Change the version in the URL to pin a different release.
 
-Want to install by name with `specify extension add axi`? That resolves the
-extension from Spec Kit's community catalog, which ships as discovery only
-(`install_allowed: false`). Approve it once:
-
-```bash
-specify extension catalog add https://raw.githubusercontent.com/github/spec-kit/main/extensions/catalog.community.json --name community --install-allowed
-specify extension add axi
-```
-
-If `specify extension add axi` fails with `installation is not allowed from that catalog`, that is why. See [Troubleshooting](https://github.com/d0whc3r/spec-kit-axi/wiki/Troubleshooting#installation-errors).
+To update, run the same command with a newer release URL and add `--force`. To see the catalog entry, run `specify extension search axi` or `specify extension info axi`. Install by name (`specify extension add axi`) does not work, because Spec Kit's community catalog is discovery only. See [Troubleshooting](https://github.com/d0whc3r/spec-kit-axi/wiki/Troubleshooting#installation-errors).
 
 For prerequisites and the first-run walkthrough see [Getting Started](https://github.com/d0whc3r/spec-kit-axi/wiki/Getting-Started).
 

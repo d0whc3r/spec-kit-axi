@@ -62,7 +62,7 @@ The extension also registers two optional hooks. After `/speckit.specify`, the `
 Install directly from the latest release:
 
 ```bash
-specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
+specify extension add axi --from https://github.com/d0whc3r/spec-kit-axi/releases/download/v2.0.0/axi-2.0.0.zip
 ```
 
 Change the version in the URL to pin a different release.

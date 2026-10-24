@@ -30,7 +30,7 @@ Install a release from its download URL:
 
 ```bash
 specify extension add axi --from \
-  https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
+  https://github.com/d0whc3r/spec-kit-axi/releases/download/v2.0.0/axi-2.0.0.zip
 ```
 
 Spec Kit shows the source URL and asks you to confirm. Change the version in the URL to pin a different release.

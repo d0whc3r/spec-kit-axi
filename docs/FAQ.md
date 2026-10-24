@@ -6,7 +6,7 @@ Spec Kit lists community extensions in a discovery-only catalog (`install_allowe
 
 ```bash
 specify extension add axi --from \
-  https://github.com/d0whc3r/spec-kit-axi/releases/download/v1.1.4/axi-1.1.4.zip
+  https://github.com/d0whc3r/spec-kit-axi/releases/download/v2.0.0/axi-2.0.0.zip
 ```
 
 See [Getting Started](Getting-Started.md#step-1-install-the-extension) for the full install step.

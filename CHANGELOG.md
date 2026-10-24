@@ -1,5 +1,17 @@
 # Changelog
 
+# [2.0.0](https://github.com/d0whc3r/spec-kit-axi/compare/v1.1.4...v2.0.0) (2026-10-24)
+
+
+### Features
+
+* require Spec Kit 0.12.17, add review hooks and per-agent command names ([75972e8](https://github.com/d0whc3r/spec-kit-axi/commit/75972e80ab146cce047e8c0003c6c58f95586b84))
+
+
+### BREAKING CHANGES
+
+* the extension now requires Spec Kit 0.12.17 or later.
+
 ## [1.1.4](https://github.com/d0whc3r/spec-kit-axi/compare/v1.1.3...v1.1.4) (2026-08-03)
 
 
